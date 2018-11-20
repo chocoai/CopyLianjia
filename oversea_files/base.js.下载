@@ -1,0 +1,1573 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * 事件触发器,事件超类
+ * 
+ * @module base/EventEmitter
+ * @see base/EventEmitter
+ * @classdesc 之所以不用jquery的对象事件，是因为jquery对象不单纯.另外无法使用单纯的事件和实现对象继承.
+ * 
+ * @example
+ * // 返回一个对象
+ * var obj = new EventEmitter();
+ * // 添加一个事件
+ * obj.on("show",function(param1){
+ *   console.log(param1)
+ * })
+ * // 触发一个事件,将console.log({a:1})
+ * obj.trigger("show",{a:1});
+ * 
+ * // 添加一次事件，以后trigger将不会触发
+ * obj.once("show",function(){})
+ * 
+ * // 移除事件 只写名称，则将会移除所有该类事件。如果说明参数都不填写，则移除所有事件.
+ * obj.off("show")
+ * 
+ * // 销毁对象，解除所有事件绑定
+ * obj.destroy();
+ * 
+ * // 返回一个新的对象，继承 EventEmitter,参数必须为对象。该对象作为BaseModel的原型链上的参数
+ * var BaseModel = EventEmitter.extend({
+ *  // 保留对象，尽量不要覆盖此对象
+ *  //_initialize_:function(){}
+ *  // 当外部调用 new BaseModel时候调用。 
+ *  initialize:function(){
+ *   // 初始化父类
+ *    this._super(); 
+ *  }
+ * });
+ */
+
+
+
+if (typeof Object.create != 'function') {
+  Object.create = (function() {
+    var Object = function() {};
+    return function(prototype) {
+      if (arguments.length > 1) {
+        throw Error('Second argument not supported');
+      }
+      if (typeof prototype != 'object') {
+        throw TypeError('Argument must be an object');
+      }
+      Object.prototype = prototype;
+      var result = new Object();
+      Object.prototype = null;
+      return result;
+    };
+  })();
+}
+if (!Object.keys) {
+  Object.keys = (function() {
+    'use strict';
+    var hasOwnProperty = Object.prototype.hasOwnProperty,
+      hasDontEnumBug = !({ toString: null }).propertyIsEnumerable('toString'),
+      dontEnums = [
+        'toString',
+        'toLocaleString',
+        'valueOf',
+        'hasOwnProperty',
+        'isPrototypeOf',
+        'propertyIsEnumerable',
+        'constructor'
+      ],
+      dontEnumsLength = dontEnums.length;
+
+    return function(obj) {
+      if (typeof obj !== 'object' && (typeof obj !== 'function' || obj === null)) {
+        throw new TypeError('Object.keys called on non-object');
+      }
+
+      var result = [],
+        prop, i;
+
+      for (prop in obj) {
+        if (hasOwnProperty.call(obj, prop)) {
+          result.push(prop);
+        }
+      }
+
+      if (hasDontEnumBug) {
+        for (i = 0; i < dontEnumsLength; i++) {
+          if (hasOwnProperty.call(obj, dontEnums[i])) {
+            result.push(dontEnums[i]);
+          }
+        }
+      }
+      return result;
+    };
+  }());
+}
+
+function Base() {}
+
+// 继承 EventEmitter
+Base.extend = function(props) {
+  var _super = this;
+
+  var _superPropotype = _super.prototype;
+
+  function Clas() {
+    // 严格模式下 this不能指向window，如果直接调用，this为 undefined
+    this && _super(this, arguments);
+    this && this._initialize_ && this._initialize_.apply(this, arguments);
+  };
+
+  var prototype = Clas.prototype = Object.create(_superPropotype);
+
+  for (var i in props) {
+    if (i === "constructor") {
+      return;
+    }
+    var prop = props[i];
+    if (typeof prop === "function" && _superPropotype[i] && typeof _superPropotype[i] === "function") {
+      prop = (function(name, fn) {
+        return function() {
+          var tmp = this._super;
+          this._super = _superPropotype[name];
+          var ret = fn.apply(this, arguments);
+          this._super = tmp;
+          return ret;
+        }
+      })(i, prop);
+    } else if (typeof prop === "object" && _superPropotype[i] && typeof _superPropotype[i] === "object") {
+      // object 继承 TODO 没有支持更深层次的嵌套
+      for (var j in _superPropotype[i]) {
+        if (!prop[j]) {
+          prop[j] = _superPropotype[i][j];
+        }
+      }
+    }
+    prototype[i] = prop;
+  }
+  Clas.extend = Base.extend;
+
+  return Clas;
+}
+/**
+ * 事件触发，作为一个事件基类，所有对象，有本身事件需要触发的皆可以使用本对象 
+ * @exports EventEmitter;
+ * @constructor
+ * 
+ */
+var EventEmitter = Base.extend({
+  _initialize_: function(promise) {
+    var _this = this;
+    _this._eventList = {};
+    _this._eventTriggerd_ = {};
+
+    this.initialize && this.initialize.apply(this, arguments);
+    this._promise_ = typeof promise === "boolean" ? promise : false;
+  },
+  on: function(type, fn) {
+    if (!type || !fn) {
+      throw "type of fn is required";
+    }
+    var _this = this;
+    var list = _this._eventList[type];
+    if (!list) {
+      list = [];
+      _this._eventList[type] = list;
+    }
+    list.push(fn);
+  },
+  off: function(type, fn) {
+    var _this = this;
+    if (!type) {
+      _this._eventList = {};
+      return;
+    }
+    var list = _this._eventList[type];
+    if (list && list.length) {
+      if (!fn) {
+        while (list.pop()) {}
+        return;
+      }
+      for (var i = 0, len = list.length; i < len; i++) {
+        if (list[i] == fn || list[i] == fn.fn) {
+          list.splice(i, 1)
+          return;
+        }
+      }
+    }
+  },
+  trigger: function(type) {
+    if (!type) {
+      return;
+    }
+    var _this = this;
+    var args = Array.prototype.slice.call(arguments, 1);
+
+    if (_this._promise_) {
+      _this._eventTriggerd_[type] = args;
+    }
+
+    var list = _this._eventList[type];
+    if (list && list.length) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].apply(_this, args) === false) {
+          return false;
+        }
+      }
+    }
+  },
+  before: function(times, func) {
+    var memo, _this = this;
+    return function() {
+      if (--times > 0) {
+        memo = func.apply(_this, arguments);
+      } else {
+        func = null;
+      }
+      return memo;
+    };
+  },
+  once: function(type, fn) {
+    var _this = this;
+    if (!type || !fn) {
+      return;
+    }
+    _this.on(type, _this.before(2, fn));
+  },
+  destroy: function() {
+    var _this = this;
+    _this._eventList = null;
+  },
+  // 每次都触发,以前触发过再触发一次
+  always: function(type, fn) {
+    var _this = this;
+    _this.on(type, fn);
+    if (_this._eventTriggerd_[type]) {
+      fn.apply(null, _this._eventTriggerd_[type])
+    }
+  }
+})
+
+module.exports = EventEmitter;
+
+/***/ }),
+/* 8 */,
+/* 9 */
+/***/ (function(module, exports) {
+
+/**
+ * 请求封装，
+ *  对接口进行统一处理
+ */
+
+function Trans(option) {
+  // 兼容以前的Trans({})写法
+  if (!(this instanceof Trans)) {
+    return new Trans(option);
+  }
+  var opt = {
+    url: "",
+    method: "get",
+    dataType: "json",
+    validateCode: true,
+    args: {},
+    type: "ajax" // ajax jsonp ijax
+  }
+
+  this.opt = $.extend(opt, option);
+  if (this.opt.type == "jsonp") {
+    this.opt.dataType = "jsonp"
+  }
+}
+
+
+$.extend(Trans.prototype, {
+  request: function(args, option) {
+    var opt = {
+      success: $.noop,
+      fail: $.noop,
+      timeout: $.noop,
+      timeout: 15 * 1000
+    }
+    $.extend(opt, option)
+
+    var deffer = $.Deferred();
+    var _this = this;
+    $.extend(_this.opt.args, args);
+
+    var ajax = $.ajax({
+      url: _this.opt.url,
+      type: _this.opt.method,
+      dataType: _this.opt.dataType,
+      data: _this.opt.args,
+      timeout: _this.opt.timeout,
+
+    }).success(function(data) {
+      if (_this.opt.validateCode === true) {
+        if (data && "code" in data) {
+          if (data.code != 1) {
+            deffer.reject(data);
+            return;
+          }
+          // 未登录
+          if (data.code == -1) {
+            // 未登录
+            $.listener && $.listener.trigger("unlogin");
+            return;
+          } else if (data.data && !$.isArray(data.data)) {
+            data = data.data
+          };
+        }
+      }
+      deffer.resolve(data);
+    }).fail(function(data) {
+      deffer.reject(data);
+    });
+
+    return deffer;
+  },
+  setArgs: function(args) {
+    $.extend(this.opt.args, args);
+  }
+})
+
+module.exports = Trans;
+
+/***/ }),
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * 数据模型
+ *  控制数据来源以及数据处理
+ * 
+ */
+
+var Base = __webpack_require__(7),
+  Trans = __webpack_require__(9);
+
+var Model = Base.extend({
+  initialize: function(option) {
+    var opt = {
+      url: "",
+      method: "get",
+      dataType: "json",
+      // ajax  jsonp iajax
+      type: "ajax",
+      args: {},
+
+      // 默认数据
+      data: false
+    }
+
+    $.extend(opt, option);
+    if (opt.url) {
+      var urlParsed = $.parseURL(opt.url);
+      var params = $.queryToJson(urlParsed.query);
+      $.extend(opt.args, params);
+      if (Object.keys(params).length) {
+        var str = "";
+        if (urlParsed.scheme) {
+          str += urlParsed.scheme + ":"
+        }
+        if (urlParsed.slash) {
+          str += urlParsed.slash
+        }
+        if (urlParsed.host) {
+          str += urlParsed.host
+        }
+        if (urlParsed.port) {
+          str += ":" + urlParsed.port
+        }
+        if (urlParsed.path) {
+          str += "/" + urlParsed.path
+        }
+        opt.url = str;
+      }
+    }
+
+
+    var _this = this;
+
+    _this.opt = opt;
+    _this.parse = _this.parse || opt.parse;
+    _this.trans = Trans(opt);
+  },
+  fetch: function(args) {
+    this.request.apply(this, arguments);
+  },
+  _triggerSuccess_: function(data) {
+    var _this = this;
+    data = _this.parse ? _this.parse(data) : data;
+    _this.data = data;
+    _this.trigger("request", data);
+  },
+  setData: function(data) {
+    this._triggerSuccess_(data);
+  },
+  update: function(index) {
+    this.trigger("update", index, this.data);
+  },
+  request: function(args) {
+    var _this = this;
+    _this.trigger("requeststart");
+
+    var _args = _this.opt.args;
+    $.extend(_args, args);
+
+    function success(data) {
+      _this._triggerSuccess_(data, _args);
+    }
+
+    function fail(data) {
+      _this.trigger("fail", data);
+    }
+
+
+    return _this.trans.request(_args).done(function(data) {
+      success(data);
+    }).fail(function(data) {
+      fail(data);
+    })
+  },
+  // // 取消请求
+  // cancel:function(){
+  //    // },
+  getArgs: function() {
+    return this.opt.args;
+  },
+  destroy: function() {
+    var _this = this;
+    _this.opt = null;
+    _this.data = null;
+    _this.trans = null;
+
+    _this._super();
+  }
+});
+
+module.exports = Model;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * 视图
+ * 
+ * @classdesc 继承EventEmitter。实现试图 数据抓取，渲染模板，事件绑定功能。
+ * @example
+var myView = new View({
+  // container 
+  el:"",
+  // 模板：可以是selector(#viewTemplate) 可以直接是模板字符串<%%><%%>(EJS写法)
+  template:"",
+  
+  // 数据获取接口
+  url:"",
+  // 获取数据参数
+  args:{},
+  // 获取数据方式,默认为get
+  method:"get",
+  
+  // 数据源对象，如果不写，将通过上面的url args创建。view将监听起requeststart ,request fail事件
+  model:"" 
+})
+// 初始化列表
+myView.init();
+// View 默认事件 重新设置参数
+<a class="actSetArgs" actData="p=1&filter=1"></a>
+// 刷新
+<a class="actRefresh"></a>
+
+
+// 创建新View 继承View.
+var ListView = View.extend({
+  // 初始化，尽量不要覆盖
+  initialize:function(option){
+    // 如果覆盖，请使用 this._super() 来调用父类方法，以初始化父类
+    this._super()
+  },
+  // 事件扩展
+  events:{
+    "click .actShow":"actShow"
+  },
+  actShow:function(e){
+  }
+})
+ */
+
+var Base = __webpack_require__(7),
+  Trans = __webpack_require__(9);
+var AView = __webpack_require__(16);
+
+var Model = __webpack_require__(14)
+
+var View = AView.extend({
+  initialize: function(option) {
+    var opt = {
+      el: "",
+      template: "",
+
+      url: "",
+      args: {},
+      method: "get",
+
+      model: ""
+    };
+    $.extend(opt, option);
+    var _this = this;
+    _this._super(option);
+    if (!_this.$el) {
+      return;
+    }
+
+    if (!opt.model) {
+      if (opt.url) {
+        _this.model = new Model(opt);
+      }
+    } else {
+      _this.model = opt.model;
+    }
+
+    if (_this.model) {
+      _this.model.on("requeststart", function() {
+        _this.showloading();
+      })
+      _this.model.on("request", function(data) {
+        _this.render(data);
+
+        _this.trigger("request", data);
+        _this.trigger("render", data);
+      });
+      _this.model.on("fail", function(data) {
+        _this.showfail();
+      });
+    }
+
+    if (opt.template) {
+      if (typeof opt.template == "string") {
+        if (opt.template.indexOf("<%") < 0) {
+          _this.template = $.template($(opt.template).html());
+        } else {
+          _this.template = $.template(opt.template);
+        }
+      } else {
+        _this.template = opt.template;
+      }
+    }
+  },
+  events: {
+    // 重新设置参数
+    "click .actSetArgs": "resetArgs",
+    // 刷新
+    "click .actRefresh": "actRefresh"
+  },
+  resetArgs: function(e) {
+    var _this = this;
+    var target = $(e.target);
+    var args = $.queryToJson(target.attr("actData"));
+    _this.model.request(args);
+    return false;
+  },
+  actRefresh: function() {
+    this.model.request();
+    return false;
+  },
+  init: function(args) {
+    this.model.request(args);
+  },
+  request: function(args) {
+    this.model.request(args);
+  },
+  setData: function(data) {
+    var _this = this;
+    _this.render(data);
+    _this.trigger("request", data);
+  },
+  render: function(data) {
+    var _this = this;
+    _this.$el.html(_this.template.render(data));
+
+  },
+  loadingHTML: '<div class="loading">loading...</div>',
+  failHTML: '<div class="fail">请求数据失败,请<a href="javascript:;" class="actRefresh">重试</a></div>',
+  showloading: function() {
+    var html = typeof this.loadingHTML == "function" ? this.loadingHTML() : this.loadingHTML;
+    this.$el.html(this.loadingHTML)
+  },
+  showfail: function() {
+    var html = typeof this.failHTML == "function" ? this.failHTML() : this.failHTML;
+    this.$el.html(html)
+  }
+})
+
+module.exports = View;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * 试图。
+ *  基础事件绑定
+ * 
+ *  
+ */
+
+var Base = __webpack_require__(7);
+var AbstractView = Base.extend({
+  initialize: function(option) {
+    var opt = {
+      el: ""
+    };
+    $.extend(opt, option);
+    var _this = this;
+    var dom = $(opt.el);
+
+    if (!dom.length) {
+      console && console.error("need a real dom");
+      return;
+    }
+    _this.opt = opt;
+    _this.$el = dom;
+    // 事件绑定
+    // delegate events
+    function addDelegate(events) {
+      for (var i in events) {
+        var evt = events[i],
+          nameType = i.split(" ");
+        dom.delegate(nameType[1], nameType[0], $.proxy(_this[evt], _this));
+      }
+    }
+    addDelegate(_this.events);
+  },
+  events: {},
+  destrory: function() {
+    var _this = this;
+    _this._super();
+    _this.$el.undelegate();
+    _this.opt = null;
+    _this.$el = null;
+  }
+})
+
+module.exports = AbstractView;
+
+/***/ }),
+/* 17 */,
+/* 18 */,
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * 链家web 公共组件
+ * 
+ * 1.cmd 代码
+ * 2.jquery
+ * 3.基础组建
+ *   1) util
+ *   2）mvc
+ *   3）事件稀释
+ *   4) ui相关 
+ *     基础浮层
+ *     autoscroll
+ */
+/*
+require("./cmd");
+require("./jquery");
+
+require("./EventEmitter");
+require("./Trans");
+// model view
+
+
+require("./Model");
+require("./AView");
+require("./View");
+require("./ListView");
+
+
+
+ */
+__webpack_require__(20);
+__webpack_require__(21);
+// 绑定 
+var config = {
+  "EventEmitter": __webpack_require__(7),
+  "Trans": __webpack_require__(9),
+  "Model": __webpack_require__(14),
+  "View": __webpack_require__(15),
+  "AView": __webpack_require__(16),
+  "ListView": __webpack_require__(22)
+}
+
+for (var i in config) {
+  $[i] = config[i];
+}
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports) {
+
+/**
+ * 模板引擎
+ */
+;$.template = (function() {
+
+  var rsplit = function(string, regex) {
+    var result = regex.exec(string), retArr = new Array(), first_idx, last_idx, first_bit;
+    while (result != null) {
+      first_idx = result.index;
+      last_idx = regex.lastIndex;
+      if ((first_idx) != 0) {
+        first_bit = string.substring(0, first_idx);
+        retArr.push(string.substring(0, first_idx));
+        string = string.slice(first_idx);
+      }
+      retArr.push(result[0]);
+      string = string.slice(result[0].length);
+      result = regex.exec(string);
+    }
+    if (!string == '') {
+      retArr.push(string);
+    }
+    return retArr;
+  }, chop = function(string) {
+    return string.substr(0, string.length - 1);
+  }, extend = function(d, s) {
+    for (var n in s) {
+      if (s.hasOwnProperty(n))
+        d[n] = s[n]
+    }
+  }
+  var EJS = function(options) {
+    options = typeof options == "string" ? {
+      view : options
+    } : options
+    this.set_options(options);
+    if (options.precompiled) {
+      this.template = {};
+      this.template.process = options.precompiled;
+      EJS.update(this.name, this);
+      return;
+    }
+    if (options.element) {
+      if ( typeof options.element == 'string') {
+        var name = options.element
+        options.element = document.getElementById(options.element)
+        if (options.element == null)
+          throw name + 'does not exist!'
+      }
+      if (options.element.value) {
+        this.text = options.element.value
+      } else {
+        this.text = options.element.innerHTML
+      }
+      this.name = options.element.id
+      this.type = '['
+    } else if (options.url) {
+      options.url = EJS.endExt(options.url, this.extMatch);
+      this.name = this.name ? this.name : options.url;
+      var url = options.url
+      //options.view = options.absolute_url || options.view || options.;
+      var template = EJS.get(this.name/*url*/, this.cache);
+      if (template)
+        return template;
+      if (template == EJS.INVALID_PATH)
+        return null;
+      try {
+        this.text = EJS.request(url + (this.cache ? '' : '?' + Math.random() ));
+      } catch(e) {
+      }
+
+      if (this.text == null) {
+        throw ( {
+          type : 'EJS',
+          message : 'There is no template at ' + url
+        }  );
+      }
+      //this.name = url;
+    }
+    var template = new EJS.Compiler(this.text, this.type);
+
+    template.compile(options, this.name);
+
+    EJS.update(this.name, this);
+    this.template = template;
+  };
+  /* @Prototype*/
+  EJS.prototype = {
+    /**
+     * Renders an object with extra view helpers attached to the view.
+     * @param {Object} object data to be rendered
+     * @param {Object} extra_helpers an object with additonal view helpers
+     * @return {String} returns the result of the string
+     */
+    render : function(object, extra_helpers) {
+      object = object || {};
+      this._extra_helpers = extra_helpers;
+      var v = new EJS.Helpers(object, extra_helpers || {});
+      return this.template.process.call(object, object, v);
+    },
+    update : function(element, options) {
+      if ( typeof element == 'string') {
+        element = document.getElementById(element)
+      }
+      if (options == null) {
+        _template = this;
+        return function(object) {
+          EJS.prototype.update.call(_template, element, object)
+        }
+      }
+      if ( typeof options == 'string') {
+        params = {}
+        params.url = options
+        _template = this;
+        params.onComplete = function(request) {
+          var object = eval(request.responseText)
+          EJS.prototype.update.call(_template, element, object)
+        }
+        EJS.ajax_request(params)
+      } else {
+        element.innerHTML = this.render(options)
+      }
+    },
+    out : function() {
+      return this.template.out;
+    },
+    /**
+     * Sets options on this view to be rendered with.
+     * @param {Object} options
+     */
+    set_options : function(options) {
+      this.type = options.type || EJS.type;
+      this.cache = options.cache != null ? options.cache : EJS.cache;
+      this.text = options.text || null;
+      this.name = options.name || null;
+      this.ext = options.ext || EJS.ext;
+      this.extMatch = new RegExp(this.ext.replace(/\./, '\.'));
+    }
+  };
+  EJS.endExt = function(path, match) {
+    if (!path)
+      return null;
+    match.lastIndex = 0
+    return path + (match.test(path) ? '' : this.ext )
+  }
+  /* @Static*/
+  EJS.Scanner = function(source, left, right) {
+
+    extend(this, {
+      left_delimiter : left + '%',
+      right_delimiter : '%' + right,
+      double_left : left + '%%',
+      double_right : '%%' + right,
+      left_equal : left + '%=',
+      left_comment : left + '%#'
+    })
+
+    this.SplitRegexp = left == '[' ? /(\[%%)|(%%\])|(\[%=)|(\[%#)|(\[%)|(%\]\n)|(%\])|(\n)/ : new RegExp('(' + this.double_left + ')|(%%' + this.double_right + ')|(' + this.left_equal + ')|(' + this.left_comment + ')|(' + this.left_delimiter + ')|(' + this.right_delimiter + '\n)|(' + this.right_delimiter + ')|(\n)');
+
+    this.source = source;
+    this.stag = null;
+    this.lines = 0;
+  };
+
+  EJS.Scanner.to_text = function(input) {
+    if (input == null || input === undefined)
+      return '';
+    if ( input instanceof Date)
+      return input.toDateString();
+    if (input.toString)
+      return input.toString();
+    return '';
+  };
+
+  EJS.Scanner.prototype = {
+    scan : function(block) {
+      scanline = this.scanline;
+      regex = this.SplitRegexp;
+      if (!this.source == '') {
+        var source_split = rsplit(this.source, /\n/);
+        for (var i = 0; i < source_split.length; i++) {
+          var item = source_split[i];
+          this.scanline(item, regex, block);
+        }
+      }
+    },
+    scanline : function(line, regex, block) {
+      this.lines++;
+      var line_split = rsplit(line, regex);
+      for (var i = 0; i < line_split.length; i++) {
+        var token = line_split[i];
+        if (token != null) {
+          try {
+            block(token, this);
+          } catch(e) {
+            throw {
+              type : 'EJS.Scanner',
+              line : this.lines
+            };
+          }
+        }
+      }
+    }
+  };
+
+  EJS.Buffer = function(pre_cmd, post_cmd) {
+    this.line = new Array();
+    this.script = "";
+    this.pre_cmd = pre_cmd;
+    this.post_cmd = post_cmd;
+    for (var i = 0; i < this.pre_cmd.length; i++) {
+      this.push(pre_cmd[i]);
+    }
+  };
+  EJS.Buffer.prototype = {
+
+    push : function(cmd) {
+      this.line.push(cmd);
+    },
+
+    cr : function() {
+      this.script = this.script + this.line.join('; ');
+      this.line = new Array();
+      this.script = this.script + "\n";
+    },
+
+    close : function() {
+      if (this.line.length > 0) {
+        for (var i = 0; i < this.post_cmd.length; i++) {
+          this.push(pre_cmd[i]);
+        }
+        this.script = this.script + this.line.join('; ');
+        line = null;
+      }
+    }
+  };
+
+  EJS.Compiler = function(source, left) {
+    this.pre_cmd = ['var ___ViewO = [];'];
+    this.post_cmd = new Array();
+    this.source = ' ';
+    if (source != null) {
+      if ( typeof source == 'string') {
+        source = source.replace(/\r\n/g, "\n");
+        source = source.replace(/\r/g, "\n");
+        this.source = source;
+      } else if (source.innerHTML) {
+        this.source = source.innerHTML;
+      }
+      if ( typeof this.source != 'string') {
+        this.source = "";
+      }
+    }
+    left = left || '<';
+    var right = '>';
+    switch(left) {
+    case '[':
+      right = ']';
+      break;
+    case '<':
+      break;
+    default:
+      throw left + ' is not a supported deliminator';
+      break;
+    }
+    this.scanner = new EJS.Scanner(this.source, left, right);
+    this.out = '';
+  };
+  EJS.Compiler.prototype = {
+    compile : function(options, name) {
+      options = options || {};
+      this.out = '';
+      var put_cmd = "___ViewO.push(";
+      var insert_cmd = put_cmd;
+      var buff = new EJS.Buffer(this.pre_cmd, this.post_cmd);
+      var content = '';
+      var clean = function(content) {
+        content = content.replace(/\\/g, '\\\\');
+        content = content.replace(/\n/g, '\\n');
+        content = content.replace(/"/g, '\\"');
+        return content;
+      };
+      this.scanner.scan(function(token, scanner) {
+        if (scanner.stag == null) {
+          switch(token) {
+          case '\n':
+            content = content + "\n";
+            buff.push(put_cmd + '"' + clean(content) + '");');
+            buff.cr();
+            content = '';
+            break;
+          case scanner.left_delimiter:
+          case scanner.left_equal:
+          case scanner.left_comment:
+            scanner.stag = token;
+            if (content.length > 0) {
+              buff.push(put_cmd + '"' + clean(content) + '")');
+            }
+            content = '';
+            break;
+          case scanner.double_left:
+            content = content + scanner.left_delimiter;
+            break;
+          default:
+            content = content + token;
+            break;
+          }
+        } else {
+          switch(token) {
+          case scanner.right_delimiter:
+            switch(scanner.stag) {
+            case scanner.left_delimiter:
+              if (content[content.length - 1] == '\n') {
+                content = chop(content);
+                buff.push(content);
+                buff.cr();
+              } else {
+                buff.push(content);
+              }
+              break;
+            case scanner.left_equal:
+              buff.push(insert_cmd + "(EJS.Scanner.to_text(" + content + ")))");
+              break;
+            }
+            scanner.stag = null;
+            content = '';
+            break;
+          case scanner.double_right:
+            content = content + scanner.right_delimiter;
+            break;
+          default:
+            content = content + token;
+            break;
+          }
+        }
+      });
+      if (content.length > 0) {
+        // Chould be content.dump in Ruby
+        buff.push(put_cmd + '"' + clean(content) + '")');
+      }
+      buff.close();
+      this.out = buff.script + ";";
+      var to_be_evaled = '/*' + name + '*/this.process = function(_CONTEXT,_VIEW) { try { with(_VIEW) { with (_CONTEXT) {' + this.out + " return ___ViewO.join('');}}}catch(e){e.lineNumber=null;throw e;}};";
+
+      try {
+        eval(to_be_evaled);
+      } catch(e) {
+        if ( typeof JSLINT != 'undefined') {
+          JSLINT(this.out);
+          for (var i = 0; i < JSLINT.errors.length; i++) {
+            var error = JSLINT.errors[i];
+            if (error.reason != "Unnecessary semicolon.") {
+              error.line++;
+              var e = new Error();
+              e.lineNumber = error.line;
+              e.message = error.reason;
+              if (options.view)
+                e.fileName = options.view;
+              throw e;
+            }
+          }
+        } else {
+          throw e;
+        }
+      }
+    }
+  };
+
+  //type, cache, folder
+  /**
+   * Sets default options for all views
+   * @param {Object} options Set view with the following options
+   * <table class="options">
+   <tbody><tr><th>Option</th><th>Default</th><th>Description</th></tr>
+   <tr>
+   <td>type</td>
+   <td>'<'</td>
+   <td>type of magic tags.  Options are '&lt;' or '['
+   </td>
+   </tr>
+   <tr>
+   <td>cache</td>
+   <td>true in production mode, false in other modes</td>
+   <td>true to cache template.
+   </td>
+   </tr>
+   </tbody></table>
+   *
+   */
+  EJS.config = function(options) {
+    EJS.cache = options.cache != null ? options.cache : EJS.cache;
+    EJS.type = options.type != null ? options.type : EJS.type;
+    EJS.ext = options.ext != null ? options.ext : EJS.ext;
+
+    var templates_directory = EJS.templates_directory || {};
+    //nice and private container
+    EJS.templates_directory = templates_directory;
+    EJS.get = function(path, cache) {
+      if (cache == false)
+        return null;
+      if (templates_directory[path])
+        return templates_directory[path];
+      return null;
+    };
+
+    EJS.update = function(path, template) {
+      if (path == null)
+        return;
+      templates_directory[path] = template;
+    };
+
+    EJS.INVALID_PATH = -1;
+  };
+  EJS.config({
+    cache : true,
+    type : '<',
+    ext : '.ejs'
+  });
+
+  /**
+   * @constructor
+   * By adding functions to EJS.Helpers.prototype, those functions will be available in the
+   * views.
+   * @init Creates a view helper.  This function is called internally.  You should never call it.
+   * @param {Object} data The data passed to the view.  Helpers have access to it through this._data
+   */
+  EJS.Helpers = function(data, extras) {
+    this._data = data;
+    this._extras = extras;
+    extend(this, extras);
+  };
+  /* @prototype*/
+  EJS.Helpers.prototype = {
+    /**
+     * Renders a new view.  If data is passed in, uses that to render the view.
+     * @param {Object} options standard options passed to a new view.
+     * @param {optional:Object} data
+     * @return {String}
+     */
+    view : function(options, data, helpers) {
+      if (!helpers)
+        helpers = this._extras
+      if (!data)
+        data = this._data;
+      return new EJS(options).render(data, helpers);
+    },
+    /**
+     * For a given value, tries to create a human representation.
+     * @param {Object} input the value being converted.
+     * @param {Object} null_text what text should be present if input == null or undefined, defaults to ''
+     * @return {String}
+     */
+    to_text : function(input, null_text) {
+      if (input == null || input === undefined)
+        return null_text || '';
+      if ( input instanceof Date)
+        return input.toDateString();
+      if (input.toString)
+        return input.toString().replace(/\n/g, '<br />').replace(/''/g, "'");
+      return '';
+    }
+  };
+  EJS.newRequest = function() {
+    var factories = [
+    function() {
+      return new ActiveXObject("Msxml2.XMLHTTP");
+    },
+    function() {
+      return new XMLHttpRequest();
+    },
+    function() {
+      return new ActiveXObject("Microsoft.XMLHTTP");
+    }];
+    for (var i = 0; i < factories.length; i++) {
+      try {
+        var request = factories[i]();
+        if (request != null)
+          return request;
+      } catch(e) {
+        continue;
+      }
+    }
+  }
+
+  EJS.request = function(path) {
+    var request = new EJS.newRequest()
+    request.open("GET", path, false);
+
+    try {
+      request.send(null);
+    } catch(e) {
+      return null;
+    }
+
+    if (request.status == 404 || request.status == 2 || (request.status == 0 && request.responseText == ''))
+      return null;
+
+    return request.responseText
+  }
+  EJS.ajax_request = function(params) {
+    params.method = (params.method ? params.method : 'GET')
+
+    var request = new EJS.newRequest();
+    request.onreadystatechange = function() {
+      if (request.readyState == 4) {
+        if (request.status == 200) {
+          params.onComplete(request)
+        } else {
+          params.onComplete(request)
+        }
+      }
+    }
+    request.open(params.method, params.url)
+    request.send(null)
+  }
+  
+  return function(str){
+    return new EJS({
+      text:str,
+      type:"<"
+    })
+  }
+})();
+
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
+
+$.encodeHTML = function (source) {
+    if(!source){
+      return source;
+    }
+    return String(source)
+                .replace(/&/g,'&amp;')
+                .replace(/</g,'&lt;')
+                .replace(/>/g,'&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+};
+$.decodeHTML = function(str){
+  if(!str){
+    return str;
+  }
+  return str.replace(/\n/g,"<br/>")
+}
+$.removeHTML = function(str){
+  if(!str){
+    return str;
+  }
+  return str.replace(/<[^>]+>/g,"");
+}
+$.queryToJson = function(str,encode){
+  if(!str){
+    return{};
+  }
+  var param = str.split("&"),obj = {};
+  for(var i = 0 , len = param.length;i< len;i++){
+    var item = param[i].split("=");
+    if(item[0]){
+      obj[item[0]] = item[1]?(encode?decodeURIComponent(item[1]):item[1]):""
+    }
+  }
+  return obj;
+}
+$.jsonToQuery = function(obj,encode){
+  var rs = [];
+  if(obj){
+    for(var i in obj){
+      rs.push(i+"="+((encode?encodeURIComponent(obj[i]):obj[i])))
+    }
+  }
+  return rs.join("&");
+}
+$.joinUrl = function(url,param){
+  if(!url){
+    url = location.href;
+  }
+
+  var args = [];
+  for(var i in param){
+    if(!i){
+      continue;
+    }
+    args.push(i+"="+encodeURIComponent(param[i]));
+  }
+
+  if(url.indexOf("?")<0){
+    url +="?"
+  }
+
+  return url + (url.indexOf("&")>=0?(url+"&"+args.join("&")):args.join("&"));
+}
+$.parseURL = function(a){
+  if(!a){
+    return null;
+  }
+  var b = /^((?:([A-Za-z]+):(\/{0,3}))?([0-9.\-A-Za-z]+\.[0-9A-Za-z]+)?(?::(\d+))?)(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/, 
+    c = ["url","origin", "scheme", "slash", "host", "port", "path", "query", "hash"], 
+    d = b.exec(a), e = {};
+  for (var f = 0, g = c.length; f < g; f += 1)
+      e[c[f]] = d[f] || "";
+  return e;
+}
+$.buildDate = function(date){
+  if(typeof date == "string"){
+    date = date.replace(/-/g,"/");
+    if(date.indexOf("/") >=0){
+      date = new Date(date);
+    }else{
+      if(!isNaN(parseInt(date))){
+        date = new Date(parseInt(date));
+      }
+    }
+  }else if(typeof date == "number"){
+    // 给的是秒
+    if((date+"").length <=10 ){
+      date = date * 1000;
+    }
+    date = new Date(date);
+  }else if(!(date instanceof Date)){
+    return false;
+  }
+  return date
+}
+$.formatDate = function(dd,fmt){
+  var date = $.buildDate(dd);
+  if(!date){
+    return dd;
+  }
+  var o = {   
+    "M+" : date.getMonth()+1,                 //月份   
+    "d+" : date.getDate(),                    //日   
+    "h+" : date.getHours(),                   //小时   
+    "m+" : date.getMinutes(),                 //分   
+    "s+" : date.getSeconds(),                 //秒   
+    "q+" : Math.floor((date.getMonth()+3)/3), //季度   
+    "S"  : date.getMilliseconds()             //毫秒   
+  };   
+  if(/(y+)/.test(fmt))  {
+    fmt=fmt.replace(RegExp.$1, (date.getFullYear()+"").substr(4 - RegExp.$1.length));   
+  } 
+  
+  for(var k in o){
+    if(new RegExp("("+ k +")").test(fmt)){
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));  
+    }
+  }
+  return fmt;   
+}
+$.getLimitString = function(str,length,suffix){
+  if(!str){
+    return str;
+  }
+  suffix = suffix || "..";
+  if(str.length >length){
+    str = str.substring(0,length)+suffix;
+  }
+  return str;
+}
+$.bLength = function(str){
+  if(!str){
+    return 0;
+  }
+  var mat=str.match(/[^\x00-\xff]/g);
+  return str.length+(mat?mat.length:0)
+}
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ * 列表view
+ * @description
+ *  1.继承View 
+ *  2.增加分页功能 以及可以指定模板填充el下的那个dom
+ * 分页注意：
+ *  1.引入模板 view/common/jspager.tpl
+ *  2.添加分页元素，属于el子元素
+ *    <div class="page-box house-lst-page-box" node-type="pageList" node-val="totalPage=<%=totalPage%>&curPage=<%=curPage%>">
+      </div>
+   指定位置填充dom
+   <div node-type="list"></div>
+ */
+
+var View = __webpack_require__(15)
+var ListView = View.extend({
+  initialize: function(opt) {
+    var _this = this;
+    _this._super(opt);
+
+    if (_this.model) {
+      _this.model.on("update", function(index, data) {
+        _this.update(index, data);
+      });
+    }
+  },
+  events: {
+    // 分页
+    "click .actPage": "showPage"
+  },
+  render: function(data) {
+    // find list element
+    var _this = this;
+    var dom = _this.$el.find('[node-type="list"]');
+    if (!dom.length) {
+      dom = _this.$el;
+    }
+    data.args = _this.model.getArgs();
+    dom.html(_this.template.render(data));
+
+    // page
+    _this.pageRender();
+  },
+  update: function(index, data) {
+    var _this = this;
+    if (!_this.opt.child) {
+      return;
+    }
+    var dom = _this.$el.find('[node-type="list"]');
+
+    if (!dom.length) {
+      dom = _this.$el;
+    }
+    data.args = _this.model.getArgs();
+    var html = _this.template.render(data);
+    var old = dom.find(_this.opt.child).get(index);
+    var newEle = $(html).find(_this.opt.child).get(index);
+    old.parentNode.replaceChild(newEle, old);
+  },
+  showloading: function() {
+    var _this = this;
+    var dom = _this.$el.find('[node-type="list"]');
+    if (!dom.length) {
+      dom = _this.$el;
+    }
+    var html = typeof this.loadingHTML == "function" ? this.loadingHTML() : this.loadingHTML;
+    dom.html(html);
+  },
+  showfail: function() {
+    var _this = this;
+    var dom = _this.$el.find('[node-type="list"]');
+    if (!dom.length) {
+      dom = _this.$el;
+    }
+    var html = typeof this.failHTML == "function" ? this.failHTML() : this.failHTML;
+    dom.html(html)
+  },
+  pageRender: function() {
+    var pageDom = this.$el.find('[node-type="pageList"]');
+    if (!pageDom.length) {
+      return;
+    }
+    var pageTemplateEl = $("#jsPagerTemplate");
+    if (pageTemplateEl.length) {
+      var html = pageTemplateEl.html();
+      var template = $.template(html);
+      var pageData = $.queryToJson(pageDom.attr("node-val"));
+      pageDom.html(template.render(pageData))
+    }
+  },
+  showPage: function(e) {
+    var _this = this;
+    var target = $(e.target);
+    var args = $.queryToJson(target.attr("act-data"));
+    if (_this.model.curArgs) {
+      args = $.extend(_this.model.curArgs, args);
+    }
+    _this.model.request(args);
+    var st = _this.$el.offset().top;
+    $("html,body").animate({
+      scrollTop: st
+    }, 300)
+  },
+  getDOM: function() {
+    return this.$el;
+  }
+})
+
+
+module.exports = ListView;
+
+/***/ })
+/******/ ]);
+//# sourceMappingURL=base.js.map

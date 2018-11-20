@@ -1,0 +1,3709 @@
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */,
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */
+/***/ (function(module, exports) {
+
+/**
+ * 监听win事件滚动，降隔100ms执行，做到scroll事件稀释
+ * 
+ * 
+ * @example
+ * var scrollCaller = require("scrollCaller");
+ * 
+ * var caller = scrollCaller(function(top){
+ *   
+ * });
+ * caller.destroy();
+ * 
+ */
+
+var timer = false,
+  win = $(window);
+
+var callbacks = [];
+
+function calllbackCaller() {
+  var st = win.scrollTop();
+  for (var len = callbacks.length - 1; len >= 0; len--) {
+    try {
+      callbacks[len].call(win, st);
+    } catch (e) {
+      console.error && console.error(e.stack);
+    }
+  }
+}
+
+function winListener() {
+  if (timer) {
+    clearTimeout(timer);
+  }
+  timer = setTimeout(function() {
+    calllbackCaller();
+  }, 30)
+}
+
+function eventListener(add) {
+  if (add) {
+    win.scroll(winListener)
+  } else {
+    win.unbind("scroll", winListener)
+  }
+}
+
+function addCall(fun) {
+  if (!callbacks.length) {
+    eventListener(true);
+  }
+  callbacks.push(fun);
+};
+
+function removeCall(fun) {
+  var index = $.inArray(fun, callbacks);
+  if (index >= 0) {
+    callbacks.splice(index, 1);
+  }
+  if (!callbacks.length) {
+    eventListener(false);
+  }
+}
+
+module.exports = function(fun) {
+  if (!fun) {
+    throw "fun is required";
+  }
+  addCall(fun);
+
+  return {
+    destroy: function() {
+      removeCall(fun);
+    }
+  }
+
+}
+
+/***/ }),
+/* 7 */,
+/* 8 */
+/***/ (function(module, exports) {
+
+/**
+ * 当前环境
+ * 
+ */
+
+  /*
+   * 开发、测试、线上 三个环境
+   * 开发的例子：http://devbj.lianjia.com:8080
+   * 测试：http://testbj.lianjia.com
+   * 线上: http://bj.lianjia.com
+   */
+  
+  
+  var _this = {
+    // 当前域名
+    host:"",
+    // 当前scheme
+    scheme:"",
+    // 当前端口
+    port:"",
+    
+    // 默认线上环境
+    env:"online"
+  };
+  
+  function init(){
+    var url = $.parseURL(location.href);
+    _this.host = url.host;
+    _this.scheme = url.scheme;
+    _this.port = url.port;
+    try{
+    var childDomainName = _this.host.match(/\.?(\w+)\.(ke|lianjia)\.com/)[1];
+  }catch(err){
+    childDomainName = "dev"
+  }
+    
+    if(childDomainName.indexOf("dev") === 0){
+      _this.env = "dev";
+    }else if(childDomainName.indexOf("test") === 0 || childDomainName.indexOf("off") === 0){
+     _this.env = "test";
+    }
+    
+  }
+  function joinUrl(obj){
+    var str = "";
+    if(obj.scheme){
+      str += obj.scheme+"://";
+    }
+    if(obj.host){
+      str += obj.host;
+    }
+    if(obj.port){
+      str += ":"+obj.port;
+    }
+    
+    if(obj.path){
+      str += "/" +obj.path;
+    }
+    if(obj.query){
+      str += "?"+obj.query;
+    }
+    if(obj.hash){
+      str += "#"+obj.hash;
+    }
+    return str;
+  }
+  
+  var env = {};
+  /**
+   * 得到现在环境的描述
+   * @return {string} dev,test,online
+   * 
+   */
+  env.getEnv = function(){
+    return _this.env;
+  };
+  /**
+   * 域名环境解析
+   *  如果传空,或者当前为线上环境，返回当前host,
+   * evn.fixedHost("login.lianjia.com") == devlogin.lianjia.com:8080
+   */
+  env.fixedHost = function(host){
+    if(!host){
+      return _this.host;
+    }
+    var childDomain = host.substring(0,host.indexOf("."));
+    switch(_this.env){
+      case "dev":
+      case "test":
+        if(childDomain.indexOf(_this.env) !==0){
+          return _this.env+host;
+        }
+      break;
+      case "online":
+      break;
+    }
+    return host;
+  };
+  /**
+   * 将url覆盖为对应的环境
+   * evn.fixedHost("http://login.lianjia.com/login/GetUser/") == http://devlogin.lianjia.com:8080/login/GetUser/
+   */
+  env.fixedUrl = function(url){
+    if(url.indexOf('http')<0){
+      url = location.protocol + url;
+    }
+    var obj = $.parseURL(url);
+    if(!obj.host){
+      obj.host = _this.host;
+      obj.scheme = _this.scheme;
+      obj.port = _this.port;
+    }else{
+      obj.host = env.fixedHost(obj.host);
+      obj.port = _this.port;
+      if(!obj.scheme){
+        obj.scheme = _this.scheme;
+      }
+    }
+    return joinUrl(obj)
+  }
+  /**
+   * 判断url是否和当前域名相同,
+   * @param {Object} url
+   */
+  env.isSameDomain = function(url){
+    var obj = $.parseURL(url);
+    return obj.host == _this.host;
+  }
+  init();
+  module.exports = env;
+
+
+
+/***/ }),
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var lazyExecute = __webpack_require__(33);
+
+function tab() {
+    var tab = $(".lianjia-link-box .tab");
+    $(".link-list div").eq(0).show();
+    $(".link-footer div").eq(0).show();
+    tab.delegate("span", "mouseover", function(e) {
+        var target = $(e.currentTarget);
+        var ind = target.index();
+        var shows = target.closest(".tab").next(".link-list");
+        target.addClass('hover').siblings('span').removeClass('hover');
+        shows.find('div').eq(ind).show().siblings('div').hide();
+    })
+}
+var tabul = $(".search-tab .tabs");
+
+function hotFrauds() {
+    $(document.body).on("mousedown", function(e) {
+        if (!$(e.target).closest(".hot-sug,.search-txt ul,.del").length) {
+            $(".hot-sug").hide();
+            tabul.css({
+                height: '35px',
+                overflow: 'hidden',
+                border: '0px',
+                background: 'none',
+                left: '0px',
+                top: '0px',
+                display: 'none'
+            });
+        }
+    });
+    $("#keyword-box:text").click(function(e) {
+        if ($(this).val() == "") {
+            $(e.target).next("div").show();
+        } else {
+            $('#keyword-box').select();
+            $(e.target).next("div").show();
+        }
+    })
+    $("#keyword-box").keydown(function(e) {
+        $(e.target).next("div").hide();
+    })
+}
+
+function tabs() {
+    var tab = $(".frauds-list .tab");
+    $(".link-list div").eq(0).show();
+    tab.delegate("span", "click", function(e) {
+        var target = $(e.currentTarget);
+        var ind = target.index();
+        var shows = target.closest(".tab").next(".link-list");
+        target.addClass('hover').siblings('span').removeClass('hover');
+        shows.find('div').eq(ind).show().siblings('div').hide();
+    })
+}
+var change = $(".search-tab .check");
+
+function searchtab() {
+    var hotsuglist = $(".hot-sug ul");
+    hotsuglist.eq(0).show();
+    change.click(function() {
+        tabul.css({
+            height: 'auto',
+            overflow: 'auto',
+            background: '#fff',
+            border: '1px solid #ccc',
+            left: '-1px',
+            top: '-1px',
+            display: 'block'
+        });
+    });
+    if (change.attr("actdata") == "ershoufang") {
+        $(".savesearch").show();
+    }
+
+    tabul.delegate("li label", "click", function(e) {
+        var target = $(e.currentTarget);
+        var ind = target.parent("li").index();
+        var menu = target.attr("actdata");
+        menu = menu.split("=")[1];
+        change.text(target.text());
+        change.attr("actdata", menu)
+        tabul.css({ display: 'none', });
+        var data = $.queryToJson(target.attr("actData"));
+        data && defaultSuggest.suggestView.model.trans.setArgs(data);
+        var formact = $(this).attr("formact");
+        var tra = target.attr("tra");
+        var tips = target.attr("tips");
+        //alert(target.closest('.search-txt').find('form').attr("action"))
+        target.closest('.search-txt').find('form').attr({ "action": formact, "target": tra });
+        target.closest('.search-txt').find('form').attr({ "data-action": formact });
+        target.closest('.search-txt').find('.autoSuggest').attr("placeholder", tips);
+        hotsuglist.eq(ind).show().siblings('ul').hide();
+        //alert(tips)
+
+        var $input = target.closest('.search-txt').find('.autoSuggest');
+        if ('placeholder' in document.createElement('input')) {
+            $input.val('');
+        } else {
+            $input.val(tips);
+        }
+        if (menu == "ershoufang") {
+            $(".savesearch").show();
+        } else {
+            $(".savesearch").hide();
+        }
+        //require("./fixed").fixedPlaceHolder(target.closest('.search-txt').find('.autoSuggest'));
+        searchsev()
+    })
+}
+
+function fixtop() {
+    var sidebarNode = $('#back-top');
+    if (sidebarNode.hasClass('fix-right-v2') || sidebarNode.hasClass('fix-right-v3')) {
+        var curItemClass = '';
+        sidebarNode
+            .on('mouseenter', 'li', function() {
+                var popupNode = $(this).find('.popup').eq(0);
+                curItemClass = this.className;
+                popupNode.show();
+                popupNode.stop().animate({
+                    'opacity': '1',
+                    'right': '38px'
+                }, 200);
+            })
+            .on('mouseleave', 'li', function() {
+                var popupNode = $(this).find('.popup').eq(0),
+                    thisClass = this.className;
+                curItemClass = '';
+                popupNode.stop().animate({
+                        'opacity': '0',
+                        'right': '48px'
+                    },
+                    200,
+                    function() {
+                        if (thisClass != curItemClass) {
+                            popupNode.hide();
+                        }
+                    }
+                );
+            });
+    } else {
+        var fixtop = $("#back-top .tips li,#gotop");
+        fixtop.mouseenter(function() {
+            $(this).find('span').css({ opacity: '1', });
+            $(this).css({
+                overflow: 'inherit',
+                width: 'auto'
+            });
+        })
+        fixtop.mouseleave(function(e) {
+            $(this).find('span').css({ opacity: '0', });
+            $(this).css({
+                overflow: 'hidden',
+                width: '37px'
+            });
+        });
+    }
+}
+var feedbackhtml = $(".feedback-box").html();
+var overlayBg = $(".overlay_bg");
+
+function feedbackbox() {
+    var fankui = $(".feedback-box");
+    var tel = $("#tel").val();
+    //var count = $("#count").val();
+    fankui.delegate("#sub", "click", function() {
+        var sub = $("#sub");
+        var boxhtml = $("#tips");
+        var url = "//www.lianjia.com/site/accuse/";
+        var counts = $("#count");
+        var tela = $("#tel").val();
+        var counta = $("#count").val();
+        counta = $.trim(counta)
+        var count = $("#count").attr("placeholder");
+
+        if (counta == "" || counta == count) {
+            $(".erro-tips").show();
+            return false;
+        }
+        if (tela == tel) {
+            tela == "";
+        }
+        var data = {
+            contact: tela,
+            content: counta,
+        }
+        $.ajax({
+            'type': "POST",
+            'url': url,
+            'dataType': 'json',
+            'data': data,
+            'xhrFields': {
+                'withCredentials': true
+            },
+            'crossDomain': true,
+            success: function(data) {
+                if (data.status == 0) {
+                    boxhtml.html("反馈成功非常感谢您的反馈！");
+                    fankui.delay(2000).fadeOut().removeClass('bounceIn');
+                    overlayBg.delay(2000).fadeOut();
+                } else {
+                    boxhtml.html("反馈失败请重新填写！");
+                }
+            }
+        })
+    })
+    fankui.delegate(".tab span", "click", function() {
+        $(".complain .tab-box").eq($(this).index()).show().siblings().hide();
+        $(this).addClass("check").siblings().removeClass("check");
+    })
+    var tpl = '<li>' +
+        '<span class="time">#{issue_time}</span>' +
+        '<span class="name">#{customer_name}</span>' +
+        '<span class="phone">#{customer_phone}</span>' +
+        '<span class="type">#{trade_type}</span>' +
+        '<span class="finish">#{issue_status}</span>' +
+        '</li>';
+
+    fankui.delegate(".ent", "click", function() {
+        $('#tousu .btn-more').attr('href', '//' + window.location.host.split('.').slice(-3).join('.') + '/report/tousu/');
+        var url = ljConf.pageConfig.ajaxroot + "ajax/tousu/GetCityTousuBrief";
+        $.ajax({
+            url: url,
+            dataType: 'jsonp',
+            data: {
+                city_id: ljConf.city_id
+            }
+        }).done(function(result) {
+            var htmlBox = $(".feedback-box #list");
+            htmlBox.html("");
+            var result = result.data;
+            if (result.data && result.data.length <= 0) {
+                $("#tousu").hide();
+            }
+            if (result.data && result.code == 0) {
+                var data = result.data;
+                var hasTpl = '';
+                for (var i = 0; i < data.length; i++) {
+                    var issue_status;
+                    if (data[i].issue_status == 1) {
+                        issue_status = "未处理";
+                    } else if (data[i].issue_status == 2) {
+                        issue_status = "处理中";
+                    } else {
+                        issue_status = "已完成";
+                    }
+                    hasTpl += $.replaceTpl(tpl, {
+                        issue_time: data[i].issue_time,
+                        customer_name: data[i].customer_name,
+                        customer_phone: data[i].customer_phone,
+                        trade_type: data[i].trade_type,
+                        issue_status: issue_status
+                    });
+                }
+                htmlBox.append(hasTpl);
+            }
+
+        })
+    })
+
+}
+
+function colse() {
+    var feedback = $("#feedback");
+    var fankui = $(".feedback-box");
+    fankui.fadeOut().removeClass('bounceIn');
+    fankui.html(feedbackhtml);
+    overlayBg.fadeOut();
+}
+
+function feedback() {
+    var feedback = $("#feedback");
+    var fankui = $(".feedback-box");
+    feedback.click(function(event) {
+        fankui.show();
+        fankui.addClass('bounceIn');
+        overlayBg.fadeIn(300);
+        fankui.html(feedbackhtml);
+    });
+    overlayBg.click(function(event) {
+        colse();
+    });
+    fankui.delegate('.closebok', 'click', function(e) {
+        colse();
+    });
+
+}
+
+function service() {
+    $('#back-top').on('click', 'li', function() {
+        var targetUrl = $(this).find('a').attr('data-url');
+        if (targetUrl) {
+            if ((window.loginData) && (window.loginData.code == 1)) {
+                window.open(targetUrl);
+            } else {
+                var loginBtn = $('.btn-login');
+                if (loginBtn.length > 0) {
+                    loginBtn.trigger('click');
+                } else {
+                    alert('请登录后使用，谢谢！');
+                }
+            }
+        }
+    });
+}
+
+function local(tab, query) {
+    //query={"name":name,"url":url};
+    searchHis = localStorage.getItem(tab);
+    searchHis = JSON.parse(searchHis);
+    if (searchHis) {
+        $.each(searchHis, function(i, j) {
+            if (j && (j.name == query.name)) {
+                searchHis.splice(i, 1);
+            }
+        })
+        searchHis.unshift(query);
+        saveQuery = searchHis.slice(0, 10);
+    } else {
+        saveQuery = [query];
+    }
+    localStorage.setItem(tab, JSON.stringify(saveQuery));
+}
+
+function searchsev() {
+    var search = $(".btn");
+    if ($(".search-tab .check").length > 0) {
+        var menus = $(".search-tab .check").attr("actdata");
+        var cityid = search.attr("daty-id");
+        menu = menus + cityid;
+        $("#keyword-box").on("formSelect", function(e, ele) {
+            $(this).val($(ele).find(".hot-title i").text());
+            url = $(ele).attr("actdata");
+            url = url.substring(url.indexOf('&url=') + 5, url.lastIndexOf('&title'));
+            url = unescape(url);
+            $(this).attr("url", url);
+        });
+        search.click(function(e) {
+            if ($("#keyword-box").attr("url")) {
+                var ent = $("#keyword-box").val();
+                var url = $("#keyword-box").attr("url");
+                query = { "name": ent, "url": url }
+                local(menu, query)
+            } else {
+                var prefix = $(".search-txt form").attr("data-action");
+                var ent = $("#keyword-box").val();
+                var url = location.protocol + "//" + window.location.host + prefix + ent;
+                if (ent != "") {
+                    query = { "name": ent, "url": url }
+                    local(menu, query);
+                }
+                // window.open(url);
+            }
+
+        });
+        var host = $(".hot-sug");
+        host.delegate("li a", "click", function(e) {
+            var target = $(e.currentTarget);
+            name = target.text();
+            url = target.attr("href");
+            query = { "name": name, "url": url };
+            local(menu, query);
+        })
+        var sug = $("#suggest-cont");
+        sug.delegate('ul li', 'click', function(e) {
+            var target = $(e.currentTarget);
+            name = target.find('.hot-title i').text();
+            url = target.attr("actdata");
+            url = url.substring(url.indexOf('&url=') + 5, url.lastIndexOf('&title'));
+            url = unescape(url);
+            query = { "name": name, "url": url };
+            local(menu, query);
+        });
+        var severlocal = localStorage.getItem(menu);
+        severlocal = JSON.parse(severlocal);
+        //console.log(severlocal);
+        if (severlocal != null) {
+            $("#keyword-box").val(severlocal[0].name);
+            var list = $(".hot-sug ul" + "#" + menus + " .list");
+            var title = $(".hot-sug ul" + "#" + menus + " .hot-name");
+            var listhtml = list.html();
+            title.text('搜索历史');
+            list.html("");
+            $.each(severlocal, function(i, j) {
+                var eat = '<li><a href="' +
+                    j.url +
+                    '" data-log_index="' +
+                    (i + 1) +
+                    '" data-log_value="' +
+                    j.name +
+                    '">' +
+                    $.encodeHTML(j.name) +
+                    '</a></li>';
+                list.append(eat);
+            });
+            var del = $('#' + menus + " .del");
+            del.show();
+            del.click(function(event) {
+                localStorage.removeItem(menu);
+                list.html("");
+                list.append(listhtml);
+                title.text('热门搜索');
+                del.hide();
+                //$("#keyword-box").val("");
+                texval == "";
+            });
+        }
+    }
+}
+
+function savesearch() {
+    var c = change.attr("actdata");
+    var datahouse = $(".savesearch");
+    if (datahouse.length) {
+        lazyExecute({
+            el: datahouse,
+            //   marginTop:100,
+            callback: function() {
+                var cityId = ljConf.city_id;
+                var list = new $.ListView({
+                    el: ".savesearch",
+                    template: "#savesearch",
+                    url: $.env.fixedUrl("//ajax.lianjia.com/ajax/user/favorite/getSearchNotifyNum"),
+                    type: "jsonp",
+                    args: {
+                        cityId: cityId
+                    }
+                })
+                list.showloading = function() {};
+                list.init();
+            }
+        })
+
+    }
+    var save = $(".savesearch");
+    var listShow = save.find(".s-show");
+    save.delegate('.more', 'click', function(e) {
+        var target = $(e.currentTarget);
+        var par = target.parent("ul");
+        par.find('.list').css({
+            'height': 'auto',
+        });
+        target.hide();
+    });
+    save.delegate(".s-show", "click", function(e) {
+        var target = $(e.currentTarget);
+        target.next('.cunn').toggle();
+        if (target.next('.cunn').css("display") == "none") {
+            target.find('label').removeClass('down');
+        } else {
+            target.find('label').addClass('down');
+        }
+
+        $(".sug-tips ul").hide();
+    })
+    $(".savesearch .s-show").click(function() {
+
+    })
+    $(document.body).on("mousedown", function(e) {
+        //console.log(1);
+        if (!$(e.target).closest(".savesearch").length) {
+            save.find('.cunn').hide();
+            save.find('label').removeClass('down');
+        }
+    });
+
+}
+
+function huodonginit() {
+    var huodongBtn = $('[data-role="huodong-btn"]'),
+        huodongMask = $('[data-role="huodong-mask"]'),
+        huodongLayer = $('[data-role="huodong-layer"]');
+
+    if (huodongBtn.length > 0) {
+        huodongBtn.click(function() {
+            huodongMask.fadeIn(500);
+            huodongLayer.addClass('bounceIn').show();
+        });
+
+        huodongLayer.click(function(e) {
+            var target = $(e.target);
+            if ((target.closest('[data-role="huodong-wrap"]').length == 0) || (target.closest('.close').length > 0)) {
+                huodongMask.fadeOut(500);
+                huodongLayer.removeClass('bounceIn').fadeOut();
+            }
+        });
+    }
+}
+
+module.exports = {
+    init: function(params) {
+        searchsev();
+        hotFrauds();
+        tab();
+        searchtab();
+        service();
+        huodonginit();
+        feedback();
+        feedbackbox();
+        fixtop();
+        savesearch();
+        tabs();
+    }
+}
+
+/***/ }),
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+/**
+ 'src/common/jquery.scrollLoading.js',
+  'src/common/fixtop.js',
+  'src/common/base.js',
+  'src/common/ajax.js',
+  'src/common/mapTranslate.js',
+  'src/common/fixed.js',
+  'src/common/pagination.js',
+  'src/common/backtop.js',
+  'src/common/login.js'
+ */
+/*
+不要删
+
+ */
+
+__webpack_require__(24);
+__webpack_require__(25);
+__webpack_require__(26);
+__webpack_require__(27);
+__webpack_require__(28);
+__webpack_require__(29);
+__webpack_require__(30);
+__webpack_require__(31);
+__webpack_require__(32);
+__webpack_require__(6);
+__webpack_require__(8);
+__webpack_require__(17);
+
+;(function(){
+  // 全局事件
+  // 页面全局事件
+  $.listener = new $.EventEmitter(true);
+  $.env = __webpack_require__(8);
+
+  $(document.body).ready(function(){
+    var domain = window.location.host;
+    // 判断域名是链家还是贝壳
+    var siteName = /lianjia\.com/.test(domain) ? "链家" : "贝壳";
+    // if (siteName == '贝壳') {
+        __webpack_require__(34).init();
+    // } else {
+    //     require("./lianjiaLogin").init();
+    // }
+
+    // suzhou 代码
+    var only = $("#only");
+    if(only.attr("data-city")){
+      if(only.attr("data-city").indexOf("su") >= 0 || only.attr("data-city").indexOf("jn") >= 0){
+        $(".laisuzhou").addClass("laisuzhou-class");
+        $(document.body).delegate(".laisuzhou","click",function(e){
+          return false;
+        })
+      }
+
+    }
+
+    __webpack_require__(17).init();
+
+    function inViewLog() {
+        setTimeout(function() {
+            $(".LOGVIEW:above-the-fold").each(function() {
+                var $el = $(this);
+
+                LjUserTrack.send({
+                    typ: 'show'
+                }, $el.get(0));
+
+                $el.removeClass('LOGVIEW');
+            });
+
+            inViewLog();
+        }, 100);
+    }
+
+
+    function bindClickLog() {
+        var $body = $(document.body);
+
+        $body.on("mousedown", ".LOGCLICK", function() {
+            LjUserTrack.send({
+                typ: ''
+            }, $(this).get(0));
+        });
+
+        $.listener.on('userInfo', function (data) {
+            $body.on("mousedown", ".LOGKEFU", function() {
+                LjUserTrack.send({
+                    ljweb_mod: 'imclick',
+                    ljweb_bl: (data.code == 1) ? '1': '0',
+                    ljweb_el: 'BB120',
+                    ljweb_group: 1
+                });
+
+                LjUserTrack.send({
+                    ljweb_mod: 'imclick',
+                    ljweb_bl: (data.code == 1) ? '1': '0',
+                    ljweb_el: 'BB120',
+                    ljweb_group: 1,
+                    evt_id: '10190'
+                });
+            });
+        });
+    }
+
+    inViewLog();
+
+    bindClickLog();
+
+
+    // $(window).on("load", function() {
+    //     setTimeout(function() {
+    //         if(window.frames) {
+    //             LjUserTrack.sendId(window.frames.length ? '10285': '10286');
+    //         }
+    //     }, 2e3);
+    // });
+
+
+
+
+  });
+
+
+})();
+
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports) {
+
+/*!
+ * jquery.scrollLoading.js
+ * by zhangxinxu  http://www.zhangxinxu.com
+ * 2010-11-19 v1.0
+ * 2012-01-13 v1.1 偏移值计算修改 position → offset
+ * 2012-09-25 v1.2 增加滚动容器参数, 回调参数
+*/
+(function($) {
+
+    $.fn.scrollLoading = function(options) {
+        var defaults = {
+            attr: 'data-url',
+            container: $(window),
+            callback: $.noop
+        };
+        var params = $.extend({}, defaults, options || {});
+        params.cache = [];
+        $(this).each(function() {
+            var node = this.nodeName.toLowerCase(), url = $(this).attr(params['attr']);
+            //重组
+            var data = {
+                obj: $(this),
+                tag: node,
+                url: url
+            };
+            params.cache.push(data);
+        });
+        
+        var callback = function(call) {
+            if ($.isFunction(params.callback)) {
+                params.callback.call(call.get(0));
+            }
+        };
+        //动态显示数据
+        var loading = function() {
+            var contop;
+            
+            var contHeight = params.container.height();
+            if ($(window).get(0) === window) {
+                contop = $(window).scrollTop();
+            } else {
+                contop = params.container.offset().top;
+            }       
+            
+            $.each(params.cache, function(i, data) {
+                var o = data.obj;
+                var tag = data.tag;
+                var url = data.url;
+
+                if (o) {
+                    var post = o.offset().top - contop;
+                    var posb = post + o.height();
+    
+                    if ((post >= 0 && post < contHeight) || (posb > 0 && posb <= contHeight)) {
+                        if (url) {
+                            //在浏览器窗口内
+                            if (tag === 'img') {
+                                //图片，改变src
+                                callback(o.attr('src', url));       
+                            } else {
+                                o.load(url, {}, function() {
+                                    callback(o);
+                                });
+                            }       
+                        } else {
+                            // 无地址，直接触发回调
+                            callback(o);
+                        }
+                        data.obj = null;    
+                    }
+                }
+            }); 
+        };
+        
+        //事件触发
+        //加载完毕即执行
+        loading();
+        //滚动执行
+        params.container.bind('scroll', loading);
+    };
+
+})(jQuery);
+/*
+ * Lazy Load - jQuery plugin for lazy loading images
+ *
+ * Copyright (c) 2007-2013 Mika Tuupola
+ *
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ * Project home:
+ *   http://www.appelsiini.net/projects/lazyload
+ *
+ * Version:  1.9.3
+ *
+ */
+
+(function($, window, document, undefined) {
+    var $window = $(window);
+
+    $.fn.lazyload = function(options) {
+        var elements = this;
+        var $container;
+        var settings = {
+            threshold       : 0,
+            failure_limit   : 0,
+            event           : "scroll",
+            effect          : "show",
+            container       : window,
+            data_attribute  : "original",
+            skip_invisible  : true,
+            appear          : null,
+            load            : null,
+            placeholder     : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC"
+        };
+
+        function update() {
+            var counter = 0;
+
+            elements.each(function() {
+                var $this = $(this);
+                if (settings.skip_invisible && !$this.is(":visible")) {
+                    return;
+                }
+                if ($.abovethetop(this, settings) ||
+                    $.leftofbegin(this, settings)) {
+                        /* Nothing. */
+                } else if (!$.belowthefold(this, settings) &&
+                    !$.rightoffold(this, settings)) {
+                        $this.trigger("appear");
+                        /* if we found an image we'll load, reset the counter */
+                        counter = 0;
+                } else {
+                    if (++counter > settings.failure_limit) {
+                        return false;
+                    }
+                }
+            });
+
+        }
+
+        if(options) {
+            /* Maintain BC for a couple of versions. */
+            if (undefined !== options.failurelimit) {
+                options.failure_limit = options.failurelimit;
+                delete options.failurelimit;
+            }
+            if (undefined !== options.effectspeed) {
+                options.effect_speed = options.effectspeed;
+                delete options.effectspeed;
+            }
+
+            $.extend(settings, options);
+        }
+
+        /* Cache container as jQuery as object. */
+        $container = (settings.container === undefined ||
+                      settings.container === window) ? $window : $(settings.container);
+
+        /* Fire one scroll event per scroll. Not one scroll event per image. */
+        if (0 === settings.event.indexOf("scroll")) {
+            $container.bind(settings.event, function() {
+                return update();
+            });
+        }
+
+        this.each(function() {
+            var self = this;
+            var $self = $(self);
+
+            self.loaded = false;
+
+            /* If no src attribute given use data:uri. */
+            if ($self.attr("src") === undefined || $self.attr("src") === false) {
+                if ($self.is("img")) {
+                    $self.attr("src", settings.placeholder);
+                }
+            }
+
+            /* When appear is triggered load original image. */
+            $self.one("appear", function() {
+                if (!this.loaded) {
+                    if (settings.appear) {
+                        var elements_left = elements.length;
+                        settings.appear.call(self, elements_left, settings);
+                    }
+                    $("<img />")
+                        .bind("load", function() {
+
+                            var original = $self.attr("data-" + settings.data_attribute);
+                            $self.hide();
+                            if ($self.is("img")) {
+                                $self.attr("src", original);
+                            } else {
+                                $self.css("background-image", "url('" + original + "')");
+                            }
+                            $self[settings.effect](settings.effect_speed);
+
+                            self.loaded = true;
+
+                            /* Remove image from array so it is not looped next time. */
+                            var temp = $.grep(elements, function(element) {
+                                return !element.loaded;
+                            });
+                            elements = $(temp);
+
+                            if (settings.load) {
+                                var elements_left = elements.length;
+                                settings.load.call(self, elements_left, settings);
+                            }
+                        })
+                        .attr("src", $self.attr("data-" + settings.data_attribute));
+                }
+            });
+
+            /* When wanted event is triggered load original image */
+            /* by triggering appear.                              */
+            if (0 !== settings.event.indexOf("scroll")) {
+                $self.bind(settings.event, function() {
+                    if (!self.loaded) {
+                        $self.trigger("appear");
+                    }
+                });
+            }
+        });
+
+        /* Check if something appears when window is resized. */
+        $window.bind("resize", function() {
+            update();
+        });
+
+        /* With IOS5 force loading images when navigating with back button. */
+        /* Non optimal workaround. */
+        if ((/(?:iphone|ipod|ipad).*os 5/gi).test(navigator.appVersion)) {
+            $window.bind("pageshow", function(event) {
+                if (event.originalEvent && event.originalEvent.persisted) {
+                    elements.each(function() {
+                        $(this).trigger("appear");
+                    });
+                }
+            });
+        }
+
+        /* Force initial check if images should appear. */
+        $(document).ready(function() {
+            update();
+        });
+
+        return this;
+    };
+
+    /* Convenience methods in jQuery namespace.           */
+    /* Use as  $.belowthefold(element, {threshold : 100, container : window}) */
+
+    $.belowthefold = function(element, settings) {
+        var fold;
+
+        if (settings.container === undefined || settings.container === window) {
+            fold = (window.innerHeight ? window.innerHeight : $window.height()) + $window.scrollTop();
+        } else {
+            fold = $(settings.container).offset().top + $(settings.container).height();
+        }
+
+        return fold <= $(element).offset().top - settings.threshold;
+    };
+
+    $.rightoffold = function(element, settings) {
+        var fold;
+
+        if (settings.container === undefined || settings.container === window) {
+            fold = $window.width() + $window.scrollLeft();
+        } else {
+            fold = $(settings.container).offset().left + $(settings.container).width();
+        }
+
+        return fold <= $(element).offset().left - settings.threshold;
+    };
+
+    $.abovethetop = function(element, settings) {
+        var fold;
+
+        if (settings.container === undefined || settings.container === window) {
+            fold = $window.scrollTop();
+        } else {
+            fold = $(settings.container).offset().top;
+        }
+
+        return fold >= $(element).offset().top + settings.threshold  + $(element).height();
+    };
+
+    $.leftofbegin = function(element, settings) {
+        var fold;
+
+        if (settings.container === undefined || settings.container === window) {
+            fold = $window.scrollLeft();
+        } else {
+            fold = $(settings.container).offset().left;
+        }
+
+        return fold >= $(element).offset().left + settings.threshold + $(element).width();
+    };
+
+    $.inviewport = function(element, settings) {
+         return !$.rightoffold(element, settings) && !$.leftofbegin(element, settings) &&
+                !$.belowthefold(element, settings) && !$.abovethetop(element, settings);
+     };
+
+    /* Custom selectors for your convenience.   */
+    /* Use as $("img:below-the-fold").something() or */
+    /* $("img").filter(":below-the-fold").something() which is faster */
+
+    $.extend($.expr[":"], {
+        "below-the-fold" : function(a) { return $.belowthefold(a, {threshold : 0}); },
+        "above-the-top"  : function(a) { return !$.belowthefold(a, {threshold : 0}); },
+        "right-of-screen": function(a) { return $.rightoffold(a, {threshold : 0}); },
+        "left-of-screen" : function(a) { return !$.rightoffold(a, {threshold : 0}); },
+        "in-viewport"    : function(a) { return $.inviewport(a, {threshold : 0}); },
+        /* Maintain BC for couple of versions. */
+        "above-the-fold" : function(a) { return !$.belowthefold(a, {threshold : 0}); },
+        "right-of-fold"  : function(a) { return $.rightoffold(a, {threshold : 0}); },
+        "left-of-fold"   : function(a) { return !$.rightoffold(a, {threshold : 0}); }
+    });
+
+})(jQuery, window, document);
+
+
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+/**
+ * @file 自动置顶插件
+ */
+(function( $ ) {
+
+    $.fn.fixtop = function(options) {
+
+        // Define default setting
+        var settings = $.extend({
+            marginTop: 0,
+            zIndex: 1000,
+            fixedWidth: '100%'
+        }, options);
+
+        var formTop = this.offset().top - settings.marginTop;
+        var el = this;
+        var missingHeight = el.height() + settings.marginTop;
+        var blankArea = $('<div/>').css({
+            'display' : el.css('display'),
+            'width' : el.outerWidth(true),
+            'height' : el.outerHeight(true),
+            'float' : el.css('float')
+        });
+
+        $(window).scroll(function(e){ 
+            //Set position of sub navogation
+            var y = formTop;
+            if ($(this).scrollTop() > y && el.css('position') != 'fixed'){ 
+                el.after(blankArea);
+                el.css({
+                    'position': 'fixed', 
+                    'top': settings.marginTop+'px',
+                    'z-index': settings.zIndex, 
+                    'width': settings.fixedWidth
+                }); 
+                if (settings.fixed !== undefined) {
+                    settings.fixed(el);
+                }
+            } 
+
+            if ($(this).scrollTop() < y && el.css('position') == 'fixed'){
+                blankArea.remove();
+                el.css({
+                    'position': 'relative', 
+                    'top': '0px',
+                    'z-index': settings.zIndex 
+                });
+                
+                if(settings.unfixed !== undefined){
+                    settings.unfixed(el);
+                }
+            }
+        });
+
+    
+        // Return jQuery so that it's chainable 
+        return this;        
+    };
+ 
+}( jQuery )); 
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
+
+$.stringFormat = function (source, opts) {
+    source = String(source);
+    var data = Array.prototype.slice.call(arguments, 1);
+    var toString = Object.prototype.toString;
+
+    if ( data.length ) {
+        data = data.length == 1 ? 
+
+            /* ie 下 Object.prototype.toString.call(null) == '[object Object]' */
+            (opts !== null && (/\[object Array\]|\[object Object\]/.test(toString.call(opts))) ? opts : data) 
+            : data;
+        return source.replace(/#\{(.+?)\}/g, function (match, key){
+            var replacer = data[key];
+
+            // chrome 下 typeof /a/ == 'function'
+            if('[object Function]' == toString.call(replacer)){
+                replacer = replacer(key);
+            }
+            return ('undefined' == typeof replacer ? '' : replacer);
+        });
+    }
+    return source;
+};
+$.trimN = function(str){
+  return str.replace(/\n{2,}/mg,"\n")
+}
+$.fixedOldComment = function(str){
+  // 所有html 换成\n
+  if(!str){
+    return str;
+  }
+  return $.decodeHTML($.trimN(str.replace(/<[^>]+>/g,"\n")));
+  
+}
+$.replaceTpl = function (tpl, data, label) {
+    var t = String(tpl),
+        s = label || /#\{([^}]*)\}/mg,
+        trim = String.trim ||
+            function (str) {
+                return str.replace(/^\s+|\s+$/g, '')
+            };
+    return t.replace(s, function (value, name) {
+        //从模板获取name,容错处理
+        return value = data[trim(name)];
+    });
+};
+
+$.strHTML = function (source, opts) {
+    source = String(source);
+    var data = Array.prototype.slice.call(arguments, 1);
+    var toString = Object.prototype.toString;
+
+    if ( data.length ) {
+        data = data.length == 1 ? 
+
+            /* ie 下 Object.prototype.toString.call(null) == '[object Object]' */
+            (opts !== null && (/\[object Array\]|\[object Object\]/.test(toString.call(opts))) ? opts : data) 
+            : data;
+        return source.replace(/#\{(.+?)\}/g, function (match, key){
+            var replacer = data[key];
+
+            // chrome 下 typeof /a/ == 'function'
+            if('[object Function]' == toString.call(replacer)){
+                replacer = replacer(key);
+            }
+            return ('undefined' == typeof replacer ? '' : $.encodeHTML(replacer));
+        });
+    }
+    return source;
+};
+
+$.showIframeImg = function (parent, url) {
+    var stylesTpl = '' 
+        + '<style>' 
+        + 'body{margin:0;padding:0}img{width:#{0}px;height:#{1}px;}'
+        + '</style>';
+    
+    var item = $(parent);
+    var height = item.height();
+    var width = item.width();
+    var styles = $.stringFormat(stylesTpl, width, height);
+
+    var frameid = 'frameimg' + Math.round(Math.random() * 1000000000); 
+    window.betafang[frameid] = ''
+        + '<head>' + styles + '</head>'
+        + '<body><img id="img-' + frameid + '" src=\'' + url + '\' />' 
+        + '</body>'; 
+    parent.append(''
+        + '<iframe style="display:none" id="' + frameid + '" src="javascript:parent.betafang[\'' + frameid + '\'];"' 
+        + ' frameBorder="0" scrolling="no" width="' + width + '" height="' + height + '"></iframe>'
+    );
+    
+};
+
+/**
+ * 异步加载script jquery是采用jsonp方式，不采用
+ * 
+ */
+$.loadScript = function(option){
+  var opt = {
+    url:"",
+    charset:"utf-8",
+    complete:$.noop,
+    fail:$.noop
+  }
+  $.extend(opt,option);
+  
+  if(!opt.url){
+    throw "url is requireed"
+  }
+  var isloaded = false;
+  var script = document.createElement("script"),
+      head = document.getElementsByTagName("head")[0],
+      result = $.Deferred();
+  
+  function success(){
+    if(isloaded){
+      return false;
+    }
+    isloaded = true;
+    script.onload = null;
+    script.onerror = null;
+    
+    opt.complete && opt.complete();
+    result.resolve();
+    head.removeChild(script);
+  }
+  function fail(){
+    if(isloaded){
+      return false;
+    }
+    isloaded = true;
+    
+    opt.fail && opt.fail();
+    head.removeChild(script);
+    result.reject();
+  }
+  script.onload = success;
+  script.onerror = fail;
+  script.onreadystatechange = function(state){
+    if(script.readyState == "complete"){
+      success();
+    }
+  }
+  
+  
+  script.type="text/javascript";
+  script.src = opt.url;
+  script.charset=opt.charset;
+  
+  head.appendChild(script);
+  
+  return result;
+}
+
+$.TextAreaUtil = (function(win){
+  var ds = document.selection;
+  var util = {
+    getCursorPosition : function(element) {
+      var result = 0;
+      
+      //处理兼容
+      if (ds) {
+        //ie
+        element.focus();
+        try{
+           var range = null;
+          range = ds.createRange();
+          var g = range.duplicate();
+          g.moveToElementText(element);
+          g.setEndPoint("EndToEnd", range);
+          
+          element.selectionStartIE = g.text.length - range.text.length;
+          element.selectionEndIE = element.selectionEndIE + range.text.length;
+          result = element.selectionStartIE;
+        }catch(e){
+          result = element.value.length;
+        }
+      } else {
+        //ff-chrome-opera
+        //加层判断
+        if (element.selectionStart || element.selectionStart == "0") {
+          //ff和opera多是element.value.length
+          //chrome
+          result = element.selectionStart;
+        }
+      }
+      return result;
+    },
+    getSelectedText : function(element) {
+      var result = "";
+      var find = function(el) {
+        if (el.selectionStart != undefined && el.selectionEnd != undefined) {
+          return el.value.slice(el.selectionStart, el.selectionEnd);
+        } else {
+          return "";
+        }
+      }
+      if (win.getSelection) {
+        //ff-chrome-opera
+        result = find(element);
+      } else {
+        //ie
+        result = document.selection.createRange().text;
+      }
+      return result;
+    }
+  }
+  return util;
+})(window);
+
+/**
+ * IE浏览器判断函数
+ */
+$.browser = $.browser || {};
+$.browser.ie = /msie (\d+\.\d+)/i.test(navigator.userAgent) 
+    ? (document.documentMode || + RegExp['\x241']) 
+    : undefined;
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
+
+var betafang = window.betafang || {};
+
+
+
+$(function () {
+
+    if (/msie (\d+\.\d+)/i.test(navigator.userAgent)) {
+        $('body').addClass('ie', 'ie' + (document.documentMode || + RegExp['\x241']));
+    }
+
+    $(".lj-lazy").lazyload();
+    
+    $('.lazyload').scrollLoading();
+
+    
+    /*$('.iframe-img').each(function () {
+        var img = $(this);
+        var parent = img.parent();
+        var url = img.attr('data-url') || img.attr('src');
+        $.showIframeImg(parent, url);
+
+        img.remove();
+        parent.children('iframe').show();
+    });*/
+
+
+    // search form submit
+    var keywordBox = $('#keyword-box,#keyword-box-01');
+    //var submitUrl;
+    //var isSubmit = false;
+    keywordBox.closest('form').on('submit', function () {
+        // if(isSubmit){
+        //     return false;
+        // }
+        // isSubmit = true;
+        var form = $(this);
+        var url = form.attr('data-action') || form.attr("action");
+        var keywordBox = form.find(".txt");
+        
+        var val = $.trim(keywordBox.val());
+        if(val == keywordBox.attr("placeholder")){
+          val = "";
+        }
+        url += encodeURIComponent(val);
+        if(form.attr("target") != "_blank"){
+            window.location.href = url;
+            return false;
+        }else{
+            form.attr('action', url);
+        }
+       
+    });
+    
+});
+
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+/**
+ * @file  通用ajax模块
+ */
+
+window.ajax = (function () {
+
+    var exports = {};
+
+    var _blankFn = function () {};
+    
+    /**
+     * GET方法
+     * 
+     * @param {string} url 
+     * @param {Function} callback 
+     */
+    exports.get = function (url, param, success, failure) {
+        success = success || _blankFn;
+        failure = failure || _blankFn;
+
+        if (!url) {
+            return false;
+        }
+
+        $.getJSON(url, param, function (response) {
+            if (response.status === 0) {
+                success(response.data);
+            }
+            else {
+                failure(response);
+            }
+        }, function (response) {
+            var resp = {
+                status: 500,
+                statusInfo: '服务请求失败'
+            };
+            failure(resp);
+        });
+    };
+
+    exports.post = function (url, param, success, failure) {
+        success = success || _blankFn;
+        failure = failure || _blankFn;
+        
+        if (!url) {
+            return false;
+        }
+        
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: param,
+            success: function (response) {
+                if (response.status === 0) {
+                    success(response.data);
+                }
+                else {
+                    failure(response);
+                }
+            },
+            failure: function (response) {
+                var resp = {
+                    status: 500,
+                    statusInfo: '服务请求失败'
+                };
+                failure(resp);
+            },
+            dataType: 'json'
+        });
+    };
+
+    return exports;
+
+})();
+
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
+
+/**
+ * @file 谷歌地图转换百度地图JS模块
+ */
+(function () {  
+
+    var transUrl = '//api.map.baidu.com/ag/coord/convert';
+
+    function loadScript(xyUrl, callback) {
+        var head = document.getElementsByTagName('head')[0];
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = xyUrl;
+
+        callback = callback || function () {};
+
+        //借鉴了jQuery的script跨域方法
+        script.onload = script.onreadystatechange = function () {
+            if((!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete')){
+                callback();
+                // Handle memory leak in IE
+                script.onload = script.onreadystatechange = null;
+                if ( head && script.parentNode) {
+                    head.removeChild( script );
+                }
+            }
+        };
+        // Use insertBefore instead of appendChild  to circumvent an IE6 bug.
+        head.insertBefore( script, head.firstChild );
+    }
+
+    function translate(point, type, callback) {
+        var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
+        var xyUrl = transUrl + '?from='+ type 
+            + '&to=4&x=' + point.lng + '&y=' + point.lat 
+            + '&callback=BMap.Convertor.' + callbackName;
+
+        callback = callback || function () {};
+        
+        //动态创建script标签
+        loadScript(xyUrl);
+        BMap.Convertor[callbackName] = function (xyResult) {
+            delete BMap.Convertor[callbackName];    //调用完需要删除改函数
+            var point = new BMap.Point(xyResult.x, xyResult.y);
+            callback(point);
+        };
+    }
+
+    function translateMore(points, type, callback) {
+        var xyUrl = transUrl + '?from=' + type + '&to=4&mode=1';
+        var xs = [];
+        var ys = [];
+        var maxCnt = 20; //每次发送的最大个数
+
+        callback = callback || function () {};
+
+        var send = function () {
+            var callbackName = 'cbk_' + Math.round(Math.random() * 10000);    //随机函数名
+            var url = xyUrl + '&x=' + xs.join(',') + '&y=' + ys.join(',') + '&callback=BMap.Convertor.' + callbackName;
+            
+            //动态创建script标签
+            loadScript(url);
+            xs = [];
+            ys = [];
+
+            BMap.Convertor[callbackName] = function (xyResults) {
+                delete BMap.Convertor[callbackName];    //调用完需要删除改函数
+
+                var xyResult = null;
+                var points = [];
+
+                for (var index in xyResults) {
+                    xyResult = xyResults[index];
+
+                    if (xyResult.error !== 0) {
+
+                        //出错就直接返回;
+                        points[index] = null;
+                        continue;
+                    }
+
+                    var point = new BMap.Point(xyResult.x, xyResult.y);
+                    points[index] = point;
+                }
+
+                callback(points);
+            };
+        };
+
+        for (var index in points) {
+            if(index % maxCnt === 0 && index !== 0){
+                send();
+            }
+
+            xs.push(points[index].lng);
+            ys.push(points[index].lat);
+            if(index == points.length - 1){
+                send();
+            }
+        }
+        
+    }
+
+    window.BMap = window.BMap || {};
+    BMap.Convertor = $({});
+    BMap.Convertor.translate = translate;
+    BMap.Convertor.translateMore = translateMore;
+})();
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
+
+/**
+ * fixed hack
+ * 
+ * js hack
+ * 1.支持placeholder
+ */
+
+;
+var LJFixed = (function($,DOC){
+	var hack = {
+		isSupportPlaceHolder:('placeholder' in DOC.createElement('input')) 
+	};
+	
+	
+	// 1.placeholder
+	function fixedPlaceHolder(dom){
+		if(hack.isSupportPlaceHolder){
+			return;
+		}
+		var that = $(dom),    
+		  text= that.attr('placeholder');    
+		if(that.val()===""){    
+			that.val(text).addClass('placeholder');    
+		}
+		that.focus(function(){    
+			//alert(that.val() + ',' + text)
+			if(that.val()=== that.attr('placeholder')){    
+		      that.val("").removeClass('placeholder');    
+		    }    
+		})
+		.blur(function(){    
+		  if(that.val()===""){    
+			  that.val(that.attr('placeholder')).addClass('placeholder');    
+		  }    
+		})
+		.closest('form').submit(function(){    
+			if(that.val() === that.attr('placeholder')){    
+		 		that.val('');    
+		    }    
+		});
+	}
+	
+	function init(){
+		// 页面定义
+    $('input[placeholder],textarea[placeholder]').each(function() {
+      var dom = $(this);
+      if(dom.attr("type") != "password"){
+        fixedPlaceHolder(this);
+      }
+    });
+	}
+	
+	$(function(){
+		init();
+	});
+
+	$.fixPlaceholder = fixedPlaceHolder;
+	
+	var exports = {};
+	exports.fixedPlaceHolder = fixedPlaceHolder;
+	
+	return exports;
+})($,document);
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+/**
+ * 分页
+ * 1.查找dom，填充dom分页
+ * 2.添加分页事件。分页事件默认处理为：
+ *  1）跳转页面
+ *  2）根据数据分页填充dom
+ *  3）callback
+ * @author dongyajie
+ */
+;var Pagination = (function(require) {
+  
+  /**
+   * 计算分页显示数据
+   * @param  {[int]} totalPage
+   * @param  {[int]} curPage default:1
+   * @return {[type]} [1,'',2,3,4,'',123];
+   */
+  function pagelist(totalPage, curPage,showPage) {
+    var rs = [];
+    showPage  = showPage ||6;
+    curPage = curPage ||1;
+    if(totalPage <= showPage){
+      for(var i = 0 ; i < totalPage;i++){
+        rs.push(i+1);
+      }
+    }else{
+      rs.push(1);
+
+      if(curPage >4){
+        rs.push('');
+      }
+      var startPage = Math.max(curPage-2,2),
+          endPage = Math.min(curPage+2,totalPage-1);
+
+      for(var i = startPage;i<=endPage;i++){
+        rs.push(i);
+      }
+      if(curPage < totalPage-3){
+        rs.push('');
+      }
+      
+      rs.push(totalPage);
+      
+    }
+
+    return rs;
+  }
+
+  /**
+   * 获得分页html
+   */
+  function getPageHtml(pageList,totalPage,curPage,template) {
+    
+    function getLink(page){
+      if(template){
+        var pgTpl = template.replace(/\{page\}/g, page);
+
+         // remove pg number when first page, for useless SEO
+        if( (page === 1) && (pgTpl.search('pg1') > -1) ) {
+          
+          if(pgTpl.search('pg1/') > -1) {
+            pgTpl = pgTpl.replace(/pg1\//, '');
+          } else {
+            pgTpl = pgTpl.replace(/pg1/, '');
+          }
+        }
+
+        return pgTpl;
+      }
+      return 'javascript:;';
+    }
+
+    var rs = [];
+    curPage = curPage || 1;
+
+
+    if(pageList && pageList.length){
+      if(curPage > 1 && totalPage >6){
+        rs.push('<a href="'+getLink(curPage-1)+'" data-page="'+(curPage-1)+'" >上一页</a>');
+      }
+      var length = pageList.length;
+      for(var i = 0 ; i < length;i++){
+
+        rs.push(pageList[i]?('<a '+(pageList[i]==curPage?'class="on"':'')+' href="'+getLink(pageList[i])+'" data-page="'+pageList[i]+'">'+pageList[i]+'</a>'):'<span>...</span>')
+      }
+
+      if(curPage < totalPage && totalPage >6){
+        rs.push('<a href="'+getLink(curPage+1)+'" data-page="'+(curPage+1)+'">下一页</a>');
+      }
+    }
+    return rs.join("");
+  }
+  
+  function parsePage(dom){
+    if(!dom){
+      return;
+    }
+    var _this = {
+      dom:$(dom),
+      // 连接模板
+      template:'',
+      targetWrapper:'',
+
+      // page-data {totalPage:10,curPage:1}
+      totalPage:0,
+      curPage:0
+    };
+    var that = $({});
+
+    function init(){
+      initData();
+      bindEvent();
+      bindListener();
+
+      initDOM();
+    }
+    function initData(){ 
+
+      _this.template = _this.dom.attr("page-url");
+      var targetWrapper = _this.dom.attr("target-wrapper");
+      if(targetWrapper){
+        _this.targetWrapper = $(targetWrapper);
+      }
+      
+
+      var data = _this.dom.attr("page-data");
+      if(data){
+        console.log('data=====:', data);
+        data = $.parseJSON(data);
+        $.extend(_this,data);
+      }else if(_this.targetWrapper){
+        _this.curPage = 1;
+        _this.totalPage = _this.targetWrapper.children().length;
+      }
+    }
+    function initDOM(){
+      // 当不到2页的时候，不生成分页模块
+      if (_this.totalPage <= 1) {
+        return;
+      }
+      var list = pagelist(_this.totalPage,_this.curPage);
+      if(!list.length){
+        _this.dom.hide();
+      }
+      var html = getPageHtml(list,_this.totalPage,_this.curPage,_this.template);
+      console.log(list, _this.totalPage, _this.curPage, _this.template);
+      _this.dom.html(html);
+
+      if(_this.targetWrapper){
+        var childs =  _this.targetWrapper.children()
+        childs.hide();
+        childs.eq(_this.curPage-1).show();
+        _this.targetWrapper.find(".lj-lazy").lazyload();
+      }
+      
+    }
+    function bindListener(){
+      if(_this.targetWrapper){
+          that.on("showPage",function(e,page){
+            _this.curPage = page;
+            initDOM();
+          })
+      }
+    }
+    function bindEvent(){
+      _this.dom.delegate('[data-page]',"click",function(){
+        var p = $(this).attr("data-page");
+        that.trigger("showPage",parseInt(p))
+      })
+
+    }
+
+    init();
+    return that;
+  }
+
+  $(function(){
+    var compPage = $("[comp-module='page']");
+    compPage.each(function(){
+      parsePage($(this))
+    })
+  })
+
+  return parsePage;
+})(); 
+
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports) {
+
+
+function b(){
+	h = $(window).height();
+	t = $(document).scrollTop();
+	var indexs = $("#back-top").attr('daty-id');
+	if(indexs){
+		if(t > h){
+			$('#gotop').show();
+			$(".fix-right .tips,.fix-right .has-ask").show();
+		}else{
+			$('#gotop').hide();
+			$(".fix-right .tips,.fix-right .has-ask").hide();
+		}
+	}else{
+		$(".fix-right .tips,.fix-right .has-ask").show();
+		if(t > h){
+			$('#gotop').show();
+		}else{
+			$('#gotop').hide();
+		}
+	}
+}
+function ent(){
+	var menu;
+	$(".ewm-close").click(function(event) {
+		/* Act on the event */
+		$(".sh-erweima").hide().addClass('hide');
+		$(this).hide();
+		var cun = $(".sh-erweima").attr("class");
+		localStorage.setItem(menu, JSON.stringify(cun));
+	});
+	var severlocal=localStorage.getItem(menu);
+	if(severlocal){
+		 if(severlocal.indexOf("sh-erweima hide")>=0){
+			$(".sh-erweima,.ewm-close").hide();
+		 }
+	}else{
+		$(".sh-erweima,.ewm-close").show();
+	}
+}
+$(document).ready(function(e) {
+	b();
+	ent();
+	$('body').on('click', '#gotop', function(){
+		$('html , body').animate({scrollTop: 0},1000);
+	});
+
+});
+$(window).scroll(function(e){
+	b();
+});
+$('body').on('click', '#back-top .mycart .popup', function (e) {
+	e.stopPropagation();
+});
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * 根据元素位置,如果元素在页面中，则执行。否则则scroll执行
+ * 
+ * 
+ */
+!(__WEBPACK_AMD_DEFINE_RESULT__ = (function(require){
+  
+  var srollCaller = __webpack_require__(6);
+  
+  
+  // 每次滚动都判断队列的位置
+  // TODO 优化，对队列按照位置进行排序，如果当前小于或者超出位置。则不再进行循环判断
+  var lazyList = [],scroller;
+  // 执行队列
+  var win = $(window);
+  function execute(st){
+    var rs = false,sopt;
+    
+    var winWidth = win.width(),winHeight = window.innerHeight;
+    
+    for(var i = 0,len = lazyList.length; i < len;i++){
+      sopt = lazyList[i];
+      
+      rs = executeInView(sopt,st,winWidth,winHeight);
+      if(rs && !sopt.always){
+        if(-- sopt.times <= 0){
+          lazyList.splice(i,1);
+          len --;
+          i--;
+        }
+      }
+    }
+  }
+  
+ 
+  // 判断是否在视图中，执行则返回true
+  function executeInView(opt,st,winWidth,winHeight){
+    var el = $(opt.el);
+    if(!st){
+      st = document.documentElement.scrollTop || document.body.scrollTop;
+    }
+    if(!winWidth){
+      winWidth = win.width();
+    }
+    if(!winHeight){
+      winHeight = window.innerHeight;
+    }
+    
+    var pos = el.offset();
+    var top  = pos.top - opt.marginTop,
+        bottom = top+ el.height() +opt.marginBottom;
+    
+    var outerTop = st,
+        outerBottom = st+winHeight;
+    
+    if(bottom < outerTop || top > outerBottom){
+      return false;
+    }
+    opt.callback && opt.callback();
+    
+    return true; 
+  }
+  
+  
+  
+  function initScroll(){
+    scroller = srollCaller(function(st){
+      execute(st);
+    });
+  }
+  
+  return function(option){
+    var opt = {
+      el:"",
+      marginTop:0,
+      marginBottom:0,
+      // 执行多少次 默认执行一次，然后移除队列
+      times:1,
+      always:false,
+      callback:$.noop
+    };
+    
+    $.extend(opt,option);
+    if(!opt.el){
+      return;
+    }
+    
+    var inView = executeInView(opt);
+    if(inView && !opt.always){
+      return;
+    }
+    
+    lazyList.push(opt);
+    if(!scroller){
+      initScroll();
+    }
+    return {
+      destroy:function(){
+        var index = lazyList.indexOf(opt);
+        if(index >=0){
+          lazyList.splice(index,1);
+        }
+      },
+      // 暂停监听
+      pause:function(){
+        var index = lazyList.indexOf(opt);
+        if(index >=0){
+          lazyList.splice(index,1);
+        }
+      },
+      resume:function(){
+        var index = lazyList.indexOf(opt);
+        if(index < 0){
+          lazyList.push(opt);
+        }
+      }
+    }
+  }
+}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+    function e() {
+        "test" == d.getEnv() ? lianjiaCasManager.config({
+            setLoginUrl: b,
+            service: b,
+            getFirstTicket: g + "login?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true",
+            loginUrl: g + "login"
+        }) : "dev" == d.getEnv() ? lianjiaCasManager.config({
+            setLoginUrl: b,
+            service: b,
+            getFirstTicket: g + "login?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true",
+            loginUrl: g + "login"
+        }) : lianjiaCasManager.config({
+            setLoginUrl: b,
+            getFirstTicket: g + "login?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true",
+            service: b,
+            loginUrl: g + "login"
+        }),
+        f && f()
+    }
+    function t(e) {
+        lianjiaCasManager ? e() : f = e
+    }
+    function n() {
+        if (!u) {
+            u = !0;
+            var t = document.createElement("script");
+            "test" == d.getEnv() ? t.src = g + "dist/js/passport.js" : "dev" === d.getEnv() ? t.src = g + "/dist/js/passport.js?v=1234" : t.src = g + "dist/js/passport.js",
+            t.type = "text/javascript",
+            t.charset = "utf-8",
+            t.onload = e,
+            document.getElementsByTagName("head")[0].appendChild(t)
+        }
+    }
+    function r() {
+        return className = $(this).attr("class"),
+        $(".overlay_bg").fadeIn(300),
+        $("#dialog_tel").removeAttr("class").addClass("panel_login animated " + className).fadeIn(),
+        $("#dialog_tel .verImg").trigger("click"),
+        $("body").css({
+            overflow: "hidden"
+        }),
+        n(),
+        !1
+    }
+    function o() {
+        return className = $(this).attr("class"),
+        $("#dialog").removeClass("bounceIn"),
+        $("#dialog").hide(),
+        $("#dialog_tel").removeAttr("class").addClass("panel_login animated className").show(),
+        $("#dialog_tel .verImg").trigger("click"),
+        $("body").css({
+            overflow: "hidden"
+        }),
+        n(),
+        !1
+    }
+    function i() {
+        return $(".panel_success").remove(),
+        $(".panel_login").fadeOut(),
+        className = $(this).attr("class"),
+        $("#dialog_tel").removeClass("bounceIn"),
+        $("#dialog_tel").hide(),
+        $("#dialog_reg").hide(),
+        $("#dialog").show(),
+        $("body").css({
+            overflow: "hidden"
+        }),
+        n(),
+        !1
+    }
+    function a() {
+        return className = $(this).attr("class"),
+        $(".overlay_bg").fadeIn(300),
+        $("#dialog_reg").removeAttr("class").addClass("panel_login animated " + className).fadeIn(),
+        $("#dialog_reg .verImg").trigger("click"),
+        $("body").css({
+            overflow: "hidden"
+        }),
+        n(),
+        !1
+    }
+    function s() {
+        return $(".panel_login").fadeOut(),
+        className = $(this).attr("class"),
+        $("#dialog_tel").removeClass("bounceIn"),
+        $("#dialog_tel").hide(),
+        $("#dialog_reg").hide(),
+        $("#dialog").hide(),
+        $("#dialog_forget").show(),
+        $("#dialog_forget .verImg").trigger("click"),
+        $("body").css({
+            overflow: "hidden"
+        }),
+        n(),
+        !1
+    }
+    function c() {
+        var e = new $.Trans({
+            url: b,
+            type: "jsonp"
+        });
+        e.request().done(function(e) {
+            e && e.username && (e.code = 1),
+            $.listener.trigger("userInfo", e)
+        }).fail(function(e) {
+            e && $.listener.trigger("userInfo", e.data)
+        })
+    }
+    function l(e) {
+        var t = __webpack_require__(35);
+        t({
+            container: $("#userNews"),
+            msgTpl: $.template($("#News").html()),
+            tipContainer: $("#indexTipContainer"),
+            tipTpl: $.template('<span class="login_bubble_tip"><%=unreadNum%></span>')
+        })
+    }
+    var d = __webpack_require__(8)
+      , u = (__webpack_require__(36),
+    !1)
+      , f = !1
+      , g = "dev" === d.getEnv() ? (window.location.protocol + "//upassport.test.ke.com:5201/") : "test" === d.getEnv() ? (window.location.protocol + "//upassport.test.ke.com:5201/") : (window.location.protocol+"//upassport.ke.com/")
+      , h = g + "freshCaptch"
+      , p = /^\w{4}$/;
+    $.env = d;
+    var m = function(e, t) {
+        $(".panel_login").hide();
+        var n = '<div class="panel_login panel_success"><i class="close_success">&times</i>' + e + (t ? "</div>" : '<div>欢迎回来，<a class="green tologin">点击这里去登录</a></div></div>');
+        $(n).appendTo(".loninContaner");
+        $(".close_success").on("click", function() {
+            $(".overlay_bg").hide(),
+            $(".panel_success").remove()
+        }),
+        t && setTimeout(function() {
+            location.reload()
+        }, 2e3)
+    }
+      , v = function(e, t) {
+        var n = {
+            phone: [/^\d{11}$/, "请输入有效的手机号"],
+            pwd: [/^\w{8,}$/, "密码必须是至少8位的数字字母组合"]
+        }
+          , r = n[t];
+        return r ? r[0].test(e) ? !0 : r[1] : !1
+    }
+      , _ = /^\d{11}$/
+      , b = window.location.protocol + "//ajax.api.ke.com/" + "login/login/getuserinfo";
+"test" == d.getEnv() ? b = (window.location.protocol + "//ajax.api.ke.com/" + "login/login/getuserinfo") : "dev" == d.getEnv() && (b = (window.location.protocol + "//ajax.api.ke.com/" + "login/login/getuserinfo"));
+    var w = {
+        checkExists: g + "CheckExist",
+        sendVerifyCode: g + "sendSms",
+        sendVerifyVoiceCode: g + "sendVoice"
+    };
+    return $(document.body).ready(function() {
+        function e() {
+            $(".panel_login").fadeOut(),
+            $(".overlay_bg").fadeOut(),
+            $("body").css({
+                overflow: ""
+            }),
+            $("#dialog").removeClass("bounceIn")
+        }
+        function n(e) {
+            e = e || "用户名或者密码错误",
+            x.find("dd").html(e),
+            x.show()
+        }
+        function c() {
+            x.hide()
+        }
+        function l(e) {
+            e = e || "用户名或者密码错误",
+            S.find("dd").html(e),
+            S.show()
+        }
+        function d() {
+            S.hide()
+        }
+        function u(e) {
+            e = e || "用户名或者密码错误",
+            V.find("dd").html(e),
+            V.show()
+        }
+        function f() {
+            V.hide()
+        }
+        function y(e) {
+            e = e || "用户名或者密码错误",
+            I.find("dd").html(e),
+            I.show()
+        }
+        function k() {
+            I.hide()
+        }
+        var C = $("#con_login_user .verImg")
+          , x = $("#con_login_user").find(".show-error")
+          , j = $("#con_login_user_tel .verImg")
+          , S = $("#con_login_user_tel").find(".show-error")
+          , T = $("#con_login_user_reg .checkVerimg .verImg")
+          , A = $("#con_login_user_tel .checkVerimg1 .verImg")
+          , V = $("#con_login_user_reg").find(".show-error")
+          , N = $("#con_forget_user_tel .verImg")
+          , I = $("#con_forget_user_tel").find(".show-error");
+        $("#con_forget_user_pw").find(".show-error");
+        C.on("click", function() {
+            var e = +new Date;
+            $(this).attr("src", h + "?t=" + e)
+        }),
+        j.on("click", function() {
+            var e = +new Date;
+            $(this).attr("src", h + "?t=" + e)
+        }),
+        N.on("click", function() {
+            var e = +new Date;
+            $(this).attr("src", h + "?t=" + e)
+        }),
+        T.on("click", function() {
+            var e = +new Date;
+            $(this).attr("src", h + "?t=" + e)
+        }),
+        A.on("click", function() {
+            var e = +new Date;
+            $(this).attr("src", h + "?t=" + e)
+        }),
+        $(".typeUserInfo").delegate(".btn-login", "click", r),
+        $(".loninContaner").delegate(".totellogin", "click", function(e) {
+            $(".panel_success").remove(),
+            o()
+        }),
+        $(".loninContaner").delegate(".tologin", "click", i),
+        $(".typeUserInfo").delegate(".btn-register", "click", a),
+        $(".loninContaner").delegate(".toforget", "click", s),
+        $(".overlay_bg,.claseDialogBtn").click(function() {
+            e()
+        }),
+        $(".close_login").click(function() {
+            e()
+        }),
+        $(".loninContaner").delegate(".checkbox-btn", "click", function(e) {
+            var t = $(this)
+              , n = t.find("input").get(0);
+            n.checked ? t.find("span").addClass("active") : t.find("span").removeClass("active")
+        });
+        var O = function(e, t) {
+            function n() {
+                c.removeClass("handler_bg").addClass("handler_ok_bg"),
+                d.text("验证通过"),
+                o.css({
+                    color: "#3072f6"
+                }),
+                c.unbind("mousedown"),
+                $(document).unbind("mousemove"),
+                $(document).unbind("mouseup"),
+                t && t()
+            }
+            var r, o = e || this, i = !1, a = {};
+            o.parent().show();
+            var e = $.extend(a, e);
+            o.css({
+                color: "#333333"
+            });
+            var s = '<div class="drag_bg"></div><div class="drag_text" onselectstart="return false;" unselectable="on">拖动滑块验证</div><div class="handler handler_bg"></div>';
+            o.html(s);
+            var c = o.find(".handler")
+              , l = o.find(".drag_bg")
+              , d = o.find(".drag_text")
+              , u = o.width() - c.width();
+            c.mousedown(function(e) {
+                i = !0,
+                r = e.pageX - parseInt(c.css("left"), 10)
+            }),
+            c.mousedown(function(e) {
+                i = !0,
+                r = e.pageX - parseInt(c.css("left"), 10)
+            }),
+            $(document).mousemove(function(e) {
+                var t = e.pageX - r;
+                i && (t > 0 && u >= t ? (c.css({
+                    left: t
+                }),
+                l.css({
+                    width: t
+                })) : t > u && n())
+            }).mouseup(function(e) {
+                i = !1;
+                var t = e.pageX - r;
+                u > t && (c.css({
+                    left: 0
+                }),
+                l.css({
+                    width: 0
+                }))
+            })
+        }
+          , E = function(e) {
+            O(e);
+            var t = e.find(".handler")
+              , n = e.find(".drag_bg")
+              , r = e.find(".drag_text");
+            t.css({
+                left: 0
+            }),
+            n.css({
+                width: 0
+            }),
+            t.removeClass("handler_ok_bg").addClass("handler_bg"),
+            r.text("拖动滑块验证"),
+            $("#drag").css({
+                color: "#333333"
+            }),
+            e.parent().hide()
+        };
+        $("#con_login_user").delegate("input", "keyup", function(e) {
+            13 == e.keyCode && $(".login-user-btn").click()
+        });
+        var q = 0;
+        $(".login-user-btn").on("click", function(e) {
+            $(".border-a").removeClass("border-a");
+            var r = $("#con_login_user").find(".item")
+              , o = ($("#con_login_agent").find(".item"),
+            r.find(".users").val())
+              , i = r.find(".password").val();
+            if (!o || v(o, "phone") !== !0)
+                return r.find(".users").focus(),
+                n("请输入有效的手机号码"),
+                void $("#con_login_user").find(".userName").addClass("border-red");
+            if ($("#con_login_user").find(".userName").removeClass("border-red"),
+            !i)
+                return r.find(".password").focus(),
+                n("请输入密码"),
+                void $("#con_login_user").find(".pwd").addClass("border-red");
+            $("#con_login_user").find(".pwd").removeClass("border-red");
+            var a = $("#con_login_user").find('[name="remember"]').get(0)
+              , s = {
+                username: o,
+                password: i,
+                code: ""
+            };
+            if (a && a.checked && (s.remember = 1),
+            "none" != $("#con_login_user .checkVerimg").css("display")) {
+                var l = $(".ver-img").val();
+                if (!p.test(l))
+                    return n("验证码格式错误"),
+                    $(".ver-img").focus(),
+                    void $("#con_login_user").find(".checkVerimg").addClass("border-red");
+                $("#con_login_user").find(".checkVerimg").removeClass("border-red"),
+                s.code = l
+            }
+            var d = null;
+            if ("none" != $(".drag").css("display")) {
+                if (!q)
+                    return void n("滑块验证不通过");
+                d = (new Date).getTime(),
+                q = 0,
+                E($("#drag"))
+            }
+            c(),
+            lianjiaCasManager.config({
+                loginUrl: g + "login",
+                getFirstTicket: g + "login?service=" + encodeURIComponent(b) + "&type=1&get-lt=true&isajax=true&from=lianjiaweb" + (null === d ? "" : "&time=" + d)
+            }),
+            t(function() {
+                lianjiaCasManager.login(s, function(e) {
+                    $.listener.trigger("loginActSuccess"),
+                    C.trigger("click"),
+                    window.NOTAUTOJUMP || location.reload()
+                }, function(e) {
+                    switch (r.removeClass("border-red"),
+                    e.eventId) {
+                    case "needCaptchaCheckWhenIpLimit":
+                        $("#con_login_user .checkVerimg").show(),
+                        n("请输入图形验证码"),
+                        C.trigger("click"),
+                        $("#con_login_user").find(".checkVerimg").addClass("border-red");
+                        break;
+                    case "needSendSms":
+                        $("#drag").find(".handler").hasClass("handler_ok_bg") || (O($("#drag")),
+                        n("请拖动滑块进行验证")),
+                        C.trigger("click");
+                        break;
+                    case "needCaptcha":
+                        $("#con_login_user .checkVerimg").show(),
+                        n("请输入图形验证码"),
+                        C.trigger("click"),
+                        $("#con_login_user").find(".checkVerimg").addClass("border-red");
+                        break;
+                    default:
+                        n(e.msg),
+                        C.trigger("click")
+                    }
+                })
+            })
+        }),
+        $(".login-user-tel-btn").on("click", function(e) {
+            $(".border-a").removeClass("border-a");
+            var n = $("#con_login_user_tel").find(".item")
+              , r = ($("#con_login_agent").find(".item"),
+            n.find(".users_tel").val())
+              , o = n.find(".verifycode").val();
+            if (!r || v(r, "phone") !== !0)
+                return n.find(".users_tel").focus(),
+                l("请输入有效的手机号码"),
+                void $("#con_login_user_tel").find(".userName").addClass("border-red");
+            if ($("#con_login_user_tel").find(".userName").removeClass("border-red"),
+            !o)
+                return n.find(".verifycode").focus(),
+                void $("#con_login_user_tel").find(".Verify").addClass("border-red");
+            $("#con_login_user_tel").find(".Verify").removeClass("border-red");
+            var i = $("#con_login_user_tel").find('[name="remember"]').get(0)
+              , a = {
+                username: r,
+                smsCode: o,
+                code: "",
+                type: 2
+            };
+            if (i && i.checked && (a.remember = 1),
+            "none" != $("#con_login_user_tel .checkVerimg").css("display")) {
+                var s = $("#con_login_user_tel .ver-img").val();
+                if (!p.test(s))
+                    return l("验证码格式错误"),
+                    $("#con_login_user_tel .ver-img").focus(),
+                    void $("#con_login_user_tel").find(".checkVerimg").addClass("border-red");
+                $("#con_login_user_tel").find(".checkVerimg").removeClass("border-red"),
+                a.code = s
+            }
+            d(),
+            lianjiaCasManager.config({
+                loginUrl: g + "login",
+                getFirstTicket: g + "login?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true&type=2&from=lianjiaweb"
+            }),
+            t(function() {
+                n.removeClass("border-red"),
+                lianjiaCasManager.login(a, function(e) {
+                    -1 == e.code ? (l(),
+                    j.trigger("click")) : ($.listener.trigger("loginActSuccess"),
+                    window.NOTAUTOJUMP || location.reload())
+                }, function(e) {
+                    switch (n.removeClass("border-red"),
+                    e.eventId) {
+                    case "needCaptcha":
+                        l("请输入验证码"),
+                        $("#con_login_user_tel .checkVerimg").show(),
+                        j.trigger("click");
+                        break;
+                    case "showCaptchaWhenSendSms":
+                        l("请输入验证码"),
+                        $("#con_login_user_tel .checkVerimg").show(),
+                        j.trigger("click");
+                    default:
+                        l(e.msg),
+                        j.trigger("click")
+                    }
+                })
+            })
+        }),
+        $(".user-forget").on("click", function(e) {
+            $(".border-a").removeClass("border-a");
+            var n = $("#con_forget_user_tel").find(".item")
+              , r = n.find(".user_forget_phone").val()
+              , o = n.find(".verifycode").val()
+              , i = $("#con_forget_user_tel").find(".password_reg").val();
+            if (!r || v(r, "phone") !== !0)
+                return n.find(".user_forget_phone").focus(),
+                y("请输入有效的手机号码"),
+                void $("#con_forget_user_tel").find(".userName").addClass("border-red");
+            if ($("#con_forget_user_tel").find(".userName").removeClass("border-red"),
+            !i || v(i, "pwd") !== !0)
+                return n.find(".password_reg").focus(),
+                y("请输入不少于8位数的密码（数字+字母）"),
+                void $("#con_forget_user_pw").find(".pwd").addClass("border-red");
+            if (!i.match(/\d/) || !i.match(/[A-Za-z]/))
+                return n.find(".password_reg").focus(),
+                y("请输入不少于8位数的密码（数字+字母）"),
+                void $("#con_forget_user_pw").find(".pwd").addClass("border-red");
+            if ($("#con_forget_user_pw").find(".pwd").removeClass("border-red"),
+            !o)
+                return n.find(".verifycode").focus(),
+                n.find(".verifycode").addClass("border-a"),
+                void $("#con_forget_user_tel").find(".Verify").addClass("border-red");
+            $("#con_forget_user_tel").find(".Verify").removeClass("border-red");
+            var a = {
+                username: r,
+                phone: r,
+                smsCode: o,
+                newPassword: i,
+                confirmPassword: i
+            };
+            if ("none" != $("#con_forget_user_tel .checkVerimg").css("display")) {
+                var s = $("#con_forget_user_tel .ver-img").val();
+                if (!p.test(s))
+                    return y("验证码格式错误"),
+                    $("#con_forget_user_tel .ver-img").focus(),
+                    void $("#con_forget_user_tel").find(".checkVerimg").addClass("border-red");
+                $("#con_forget_user_tel").find(".checkVerimg").removeClass("border-red"),
+                a.code = s
+            }
+            k(),
+            lianjiaCasManager.config({
+                getFirstTicket: g + "forgotpassword?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true&from=lianjiaweb",
+                loginUrl: g + "forgotpassword"
+            }),
+            t(function() {
+                lianjiaCasManager.login(a, function(e) {
+                    $("#con_forget_user_pw").find(".pwd").removeClass("border-red"),
+                    $.listener.trigger("loginActSuccess"),
+                    window.NOTAUTOJUMP || (m("修改密码成功"),
+                    N.trigger("click"))
+                }, function(e) {
+                    $("#con_forget_user_pw").find(".pwd").removeClass("border-red"),
+                    1 === e.code ? (y(),
+                    N.trigger("click")) : 2 === e.code ? (y("请输入验证码"),
+                    $("#con_forget_user_tel .checkVerimg").show(),
+                    N.trigger("click")) : 3 === e.code ? (y("短信验证码输入错误"),
+                    $("#con_forget_user_tel .checkVerimg").show(),
+                    N.trigger("click")) : (y(e.msg),
+                    $("#con_forget_user_tel .checkVerimg").show(),
+                    N.trigger("click"))
+                })
+            })
+        }),
+        $(".register-user-btn").on("click", function(e) {
+            $(".border-a").removeClass("border-a");
+            var n = $("#con_login_user_reg").find(".item")
+              , r = ($("#con_login_agent").find(".item"),
+            n.find(".users_reg").val())
+              , o = n.find(".verifycode").val()
+              , i = n.find(".password_reg").val();
+            if (!r || v(r, "phone") !== !0)
+                return n.find(".users_reg").focus(),
+                u("请输入有效的手机号码"),
+                void $("#con_login_user_reg").find(".userName").addClass("border-red");
+            if ($("#con_login_user_reg").find(".userName").removeClass("border-red"),
+            !o)
+                return n.find(".verifycode").focus(),
+                n.find(".verifycode").addClass("border-a"),
+                void $("#con_login_user_reg").find(".Verify").addClass("border-red");
+            if ($("#con_login_user_reg").find(".Verify").removeClass("border-red"),
+            !i || v(i, "pwd") !== !0)
+                return n.find(".password_reg").focus(),
+                u("请输入不少于8位数的密码（数字+字母）"),
+                void $("#con_login_user_reg").find(".pwd").addClass("border-red");
+            if ($("#con_login_user_reg").find(".pwd").removeClass("border-red"),
+            !i.match(/\d/) || !i.match(/[A-Za-z]/))
+                return n.find(".password_reg").focus(),
+                u("请输入不少于8位数的密码（数字+字母）"),
+                void $("#con_login_user_reg").find(".pwd").addClass("border-red");
+            $("#con_login_user_reg").find(".pwd").removeClass("border-red");
+            var a = $("#con_login_user_reg").find('[name="read"]').get(0)
+              , s = {
+                username: r,
+                verify: o,
+                password: i,
+                smsCode: o,
+                confirmPassword: i
+            };
+            if (!a.checked)
+                return u("请阅读协议并确认"),
+                void a.focus();
+            if ("none" != $("#con_login_user_reg .checkVerimg").css("display")) {
+                var c = $("#con_login_user_reg .ver-img").val();
+                if (!p.test(c))
+                    return u("验证码格式错误"),
+                    $("#con_login_user_reg .ver-img").focus(),
+                    void $("#con_login_user_reg").find(".checkVerimg").addClass("border-red");
+                $("#con_login_user_reg").find(".checkVerimg").removeClass("border-red"),
+                s.code = c
+            }
+            f(),
+            lianjiaCasManager.config({
+                getFirstTicket: g + "register?service=" + encodeURIComponent(b) + "&get-lt=true&isajax=true&from=lianjiaweb",
+                loginUrl: g + "register"
+            }),
+            t(function() {
+                lianjiaCasManager.login(s, function(e) {
+                    n.removeClass("border-red"),
+                    -1 == e.code ? (u(e.msg),
+                    T.trigger("click")) : ($.listener.trigger("loginActSuccess"),
+                    window.NOTAUTOJUMP || m("注册成功", !0))
+                }, function(e) {
+                    switch (n.removeClass("border-red"),
+                    e.eventId) {
+                    case "needCaptcha":
+                        u("请输入验证码"),
+                        $("#con_login_user_reg .checkVerimg").show(),
+                        T.trigger("click");
+                        break;
+                    case "showCaptchaWhenSendSms":
+                        u("请输入验证码"),
+                        $("#con_login_user_reg .checkVerimg").show(),
+                        T.trigger("click");
+                    default:
+                        u(e.msg),
+                        T.trigger("click")
+                    }
+                })
+            })
+        });
+        var U = function(e) {
+            if (void 0 == e || "" === e)
+                return !1;
+            if ("object" == typeof e)
+                for (var t in e) {
+                    var n = e[t].value
+                      , r = e[t].required;
+                    if (void 0 === r || r.value === !1)
+                        ;
+                    else if (void 0 == n || "" == n)
+                        return r.hint ? r.hint : !1;
+                    var o = e[t].pattern;
+                    if (o && !n.match(o.value))
+                        return o.hint ? o.hint : !1;
+                    var i = e[t].equal;
+                    if (i) {
+                        var a = e[i.propertyName];
+                        if (void 0 == a)
+                            return !1;
+                        if (a.value != n)
+                            return i.hint ? i.hint : !1
+                    }
+                }
+            return !0
+        };
+        $("#send_verify_code_tel").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".users_tel").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return l(n),
+                !1;
+            var r = {
+                phone: $(".users_tel").val()
+            };
+            if ($("#con_login_user_tel .checkVerimg").length > 0 && "" != $("#con_login_user_tel .checkVerimg input").val() && (r.code = $("#con_login_user_tel .checkVerimg input").val(),
+            $("#con_login_user_tel").find(".checkVerimg").removeClass("border-red")),
+            !$("#con_login_user_tel .checkVerimg input").val())
+                return $("#con_login_user_tel").find(".checkVerimg").addClass("border-red"),
+                l("请输入图形验证码"),
+                !1;
+            var o = function(e) {
+                var t = null
+                  , n = $("#send_verify_code_tel")
+                  , r = function() {
+                    return 0 >= e ? (n.removeClass("disabled"),
+                    n.find("em").html("重新获取验证码"),
+                    clearInterval(t),
+                    void d()) : (40 == e && $(".send_verify_code_s").show(),
+                    n.find("em").html(e-- + "s 后重新发送"),
+                    void n.addClass("disabled"))
+                };
+                t = setInterval(r, 1e3)
+            };
+            $.ajax({
+                url: w.sendVerifyCode,
+                type: "post",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 === e.code ? (d(),
+                o(60)) : 2 == e.code ? (l("请输入图形验证码"),
+                $("#con_login_user_tel .checkVerimg").show(),
+                j.trigger("click")) : 8 == e.code || 0 == e.code ? (l(e.msg),
+                j.trigger("click")) : (l(e),
+                j.trigger("click"))
+            }).fail(function(e) {
+                l("发送失败，请重试"),
+                o(0),
+                $(this).removeClass("disable"),
+                1 === e.code ? (d(),
+                j.trigger("click"),
+                o(60)) : 2 == e.code ? (l("请输入图形验证码"),
+                $("#con_login_user_tel .checkVerimg").show(),
+                j.trigger("click")) : 8 == e.code || 0 == e.code ? (l(e.msg),
+                j.trigger("click")) : (l(e),
+                j.trigger("click"))
+            })
+        }),
+        $("#send_verify_code_tel_s .voice_a").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".users_tel").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return l(n),
+                !1;
+            var r = {
+                phone: $(".users_tel").val()
+            };
+            return $("#con_login_user_tel .checkVerimg").length > 0 && "" != $("#con_login_user_tel .checkVerimg input").val() && (r.code = $("#con_login_user_tel .checkVerimg input").val(),
+            $("#con_login_user_tel").find(".checkVerimg").removeClass("border-red")),
+            $("#con_login_user_tel .checkVerimg input").val() ? void $.ajax({
+                url: w.sendVerifyVoiceCode,
+                type: "post",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 === e.code ? (d(),
+                $("#send_verify_code_tel_s").hide(),
+                l("验证码将以电话的形式的通知到您，请注意接听")) : 2 == e.code ? (l("请输入验证码"),
+                $("#send_verify_code_tel .checkVerimg").show(),
+                j.trigger("click")) : 8 == e.code || 0 == e.code ? (l(e.msg),
+                j.trigger("click")) : (l(e),
+                j.trigger("click"))
+            }).fail(function(e) {
+                e.code = 1,
+                l("发送失败，请重试"),
+                $(this).removeClass("disable"),
+                1 === e.code ? (d(),
+                j.trigger("click")) : 2 == e.code ? (l("请输入验证码"),
+                $("#send_verify_code_tel .checkVerimg").show(),
+                j.trigger("click")) : 8 == e.code || 0 == e.code ? (l(e.msg),
+                j.trigger("click")) : (l(e),
+                j.trigger("click"))
+            }) : (l("请输入图形验证码"),
+            $("#con_login_user_tel").find(".checkVerimg").addClass("border-red"),
+            !1)
+        }),
+        $("#send_verify_code_forget").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".user_forget_phone").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return y(n),
+                !1;
+            var r = {
+                phone: $(".user_forget_phone").val()
+            };
+            if ($("#con_forget_user_tel .checkVerimg").length > 0 && "" != $("#con_forget_user_tel .checkVerimg input").val() && (r.code = $("#con_forget_user_tel .checkVerimg input").val(),
+            $("#con_forget_user_tel").find(".checkVerimg").removeClass("border-red")),
+            !$("#con_forget_user_tel .checkVerimg input").val())
+                return y("请输入图形验证码"),
+                $("#con_forget_user_tel").find(".checkVerimg").addClass("border-red"),
+                !1;
+            var o = function(e) {
+                var t = null
+                  , n = $("#send_verify_code_forget")
+                  , r = function() {
+                    return 0 >= e ? (n.removeClass("disabled"),
+                    n.find("em").html("重新获取验证码"),
+                    clearInterval(t),
+                    void f()) : (40 == e && $("#send_verify_code_forget_s").show(),
+                    n.find("em").html(e-- + "s 后重新发送"),
+                    void n.addClass("disabled"))
+                };
+                t = setInterval(r, 1e3)
+            };
+            $.ajax({
+                url: w.sendVerifyCode + "?sendOn=exist",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 == e.code ? (k(),
+                o(60)) : 8 == e.code || 0 == e.code ? (y(e.msg),
+                N.trigger("click")) : 2 == e.code ? (y("请输入验证码"),
+                $("#con_forget_user_tel .checkVerimg").show(),
+                N.trigger("click")) : (y(e),
+                N.trigger("click"))
+            }).fail(function(e) {
+                e.code = 1,
+                y("发送失败，请重试"),
+                o(0),
+                $(this).removeClass("disable"),
+                1 === e.code ? (k(),
+                o(60)) : 2 == e.code ? (y("请输入验证码"),
+                $("#con_forget_user_tel .checkVerimg").show(),
+                N.trigger("click")) : 8 == e.code || 0 == e.code ? (y(e.msg),
+                N.trigger("click")) : (y(e),
+                N.trigger("click"))
+            })
+        }),
+        $("#send_verify_code_forget_s .voice_a").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".user_forget_phone").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return u(n),
+                !1;
+            var r = {
+                phone: $(".user_forget_phone").val()
+            };
+            return $("#con_forget_user_tel .checkVerimg").length > 0 && "" != $("#con_forget_user_tel .checkVerimg input").val() && (r.code = $("#con_forget_user_tel .checkVerimg input").val(),
+            $("#con_forget_user_tel").find(".checkVerimg").removeClass("border-red")),
+            $("#con_forget_user_tel .checkVerimg input").val() ? void $.ajax({
+                url: w.sendVerifyVoiceCode + "?sendOn=exist",
+                type: "post",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 === e.code ? (k(),
+                $("#send_verify_code_forget_s").hide(),
+                y("验证码将以电话的形式的通知到您，请注意接听")) : 8 == e.code || 0 == e.code ? (y(e.msg),
+                N.trigger("click")) : 2 == e.code ? (y("请输入验证码"),
+                $("#con_forget_user_tel .checkVerimg").show(),
+                N.trigger("click")) : (y(e),
+                N.trigger("click"))
+            }).fail(function(e) {
+                y("发送失败，请重试"),
+                $(this).removeClass("disable"),
+                1 === e.code ? (k(),
+                N.trigger("click")) : 2 == e.code ? (l("请输入验证码"),
+                $("#con_forget_user_tel .checkVerimg").show(),
+                N.trigger("click")) : 8 == e.code || 0 == e.code ? (y(e.msg),
+                N.trigger("click")) : (y(e),
+                N.trigger("click"))
+            }) : (y("请输入图形验证码"),
+            $("#con_forget_user_tel").find(".checkVerimg").addClass("border-red"),
+            !1)
+        }),
+        $("#send_verify_code_reg").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".users_reg").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return u(n),
+                !1;
+            var r = {
+                phone: $(".users_reg").val()
+            };
+            if ($("#con_login_user_reg .checkVerimg").length > 0 && "" != $("#con_login_user_reg .checkVerimg input").val() && (r.code = $("#con_login_user_reg .checkVerimg input").val(),
+            $("#con_login_user_reg").find(".checkVerimg").removeClass("border-red")),
+            !$("#con_login_user_reg .checkVerimg input").val())
+                return u("请输入图形验证码"),
+                $("#con_login_user_reg").find(".checkVerimg").addClass("border-red"),
+                !1;
+            var o = function(e) {
+                var t = null
+                  , n = $("#send_verify_code_reg")
+                  , r = function() {
+                    return 0 >= e ? (n.removeClass("disabled"),
+                    n.find("em").html("重新获取验证码"),
+                    clearInterval(t),
+                    void f()) : (40 == e && $("#send_verify_code_reg_s").show(),
+                    n.find("em").html(e-- + "s 后重新发送"),
+                    void n.addClass("disabled"))
+                };
+                t = setInterval(r, 1e3)
+            };
+            $.ajax({
+                url: w.sendVerifyCode + "?sendOn=noExist",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 == e.code ? (f(),
+                o(60)) : 8 == e.code || 0 == e.code ? (u(e.msg),
+                T.trigger("click")) : 2 == e.code ? (u("请输入验证码"),
+                $("#con_login_user_reg .checkVerimg").show(),
+                T.trigger("click")) : (u(e),
+                T.trigger("click"))
+            }).fail(function(e) {
+                u("发送失败，请重试"),
+                o(0),
+                $(this).removeClass("disable"),
+                1 == e.code ? (f(),
+                o(60)) : 0 == e.code || 8 == e.code ? (u(e.msg),
+                T.trigger("click")) : 2 == e.code ? (u("请输入验证码"),
+                $("#con_login_user_reg .checkVerimg").show(),
+                T.trigger("click")) : (u(e),
+                T.trigger("click"))
+            })
+        }),
+        $("#send_verify_code_reg_s .voice_a").on("click", function(e) {
+            if ($(this).hasClass("disabled"))
+                return !1;
+            var t = {
+                telNum: {
+                    value: $(".users_reg").val(),
+                    pattern: {
+                        value: _,
+                        hint: "请输入有效的手机号码"
+                    }
+                }
+            }
+              , n = U(t);
+            if (1 != n)
+                return u(n),
+                !1;
+            var r = {
+                phone: $(".users_reg").val()
+            };
+            return $("#con_login_user_reg .checkVerimg").length > 0 && "" != $("#con_login_user_reg .checkVerimg input").val() && (r.code = $("#con_login_user_reg .checkVerimg input").val(),
+            $("#con_login_user_reg").find(".checkVerimg").removeClass("border-red")),
+            $("#con_login_user_reg .checkVerimg input").val() ? void $.ajax({
+                url: w.sendVerifyVoiceCode + "?sendOn=noExist",
+                type: "post",
+                dataType: "jsonp",
+                data: r
+            }).done(function(e) {
+                1 == e.code ? (f(),
+                $("#send_verify_code_reg_s").hide(),
+                u("验证码将以电话的形式的通知到您，请注意接听")) : 8 == e.code || 0 == e.code ? (u(e.msg),
+                T.trigger("click")) : 2 == e.code ? (u("请输入验证码"),
+                $("#con_login_user_reg .checkVerimg").show()) : (u(e),
+                T.trigger("click"))
+            }).fail(function(e) {
+                e.code = 1,
+                u("发送失败，请重试"),
+                $(this).removeClass("disable"),
+                1 === e.code ? (f(),
+                T.trigger("click")) : 2 == e.code ? (u("请输入验证码"),
+                $("#con_login_user_reg .checkVerimg").show(),
+                T.trigger("click")) : 8 == e.code || 0 == e.code ? (u(e.msg),
+                T.trigger("click")) : (u(e),
+                T.trigger("click"))
+            }) : (u("请输入图形验证码"),
+            $("#con_login_user_reg").find(".checkVerimg").addClass("border-red"),
+            !1)
+        })
+    }),
+    $(".password-view").on("click", function() {
+        var e = $(this).siblings("input");
+        e.attr("type", "password" == e.attr("type") ? "text" : "password")
+    }),
+    $(".checkVerimg").trigger("click"),
+    {
+        init: function() {
+            function e(e) {
+                var t = $(".typeUserInfo");
+                e && e.username && (e.username = $.encodeHTML($.getLimitString(e.username, 20, ".."))),
+                t.each(function() {
+                    var t = $(this);
+                        t.find('.template').html(` 
+                            <%if(data && data.username){%>
+                            <%if(data.isAgent){%>
+                            <a href="<%=$.env.fixedUrl('//agent.ke.com/')%>"><span><%=data.username%>&nbsp;&nbsp;</span></a>
+                            <%}else{%>
+                                <a href="<%=$.env.fixedUrl('//user.ke.com/')%>" rel="nofollow"><span><%=data.username%>&nbsp;&nbsp;</span></a>
+                            <%}%>
+                            <%if(data.isAgent){%>
+                                <span class="welcome"><a class="reg" href="<%=data.logoutUrl%>">退出</a></span>
+                            <%}else{%>
+                                <span class="welcome"><a class="reg" href="<%=data.logoutUrl%>">退出</a></span>
+                                <%}%>
+                            <%}else{%>
+                            <span class="welcome"><a class="btn-register" href="javascript:;"><span class="log">注册</span></a><a class="btn-login bounceIn actLoginBtn" href="javascript:;"><span class="reg">立即登录</span></a></span>
+                            <%}%>
+                            `);
+                    
+                      var n = t.find(".template").html();
+                    if (n) {
+                        n = $.template(n);
+                        var r = $.trim(n.render({
+                            data: e
+                        }));
+                        t.find(".typeShowUser").html(r)
+                    }
+                })
+            }
+            $.listener.on("userInfo", function(t) {
+                e(t),
+                t.username && l($(".typeUserInfo").find(".typeShowUser a").eq(0))
+            }),
+            c()
+        },
+        openLoginDialog: r,
+        openDialogRegister: a
+    }
+}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * 用户推送数据组件
+ * @param  options 包括
+ *   container 消息容器
+ *   msgTpl 消息模板
+ *   tipContainer 提示容器
+ *   tipTpl 提示模板
+ */
+!(__WEBPACK_AMD_DEFINE_RESULT__ = (function(require){
+  return function (options){
+    var interfaceUrl = $.env.fixedUrl("//ajax.lianjia.com/ajax/user/favorite/getnotifynum/");
+    var userPushMsgMap = {
+      'house_showing':{
+        url:'//user.lianjia.com/site/seeSchedule',
+        text:'你的看房日程有<span class="unreadNumber">#{unread}</span>条更新'
+      },
+      'community_new_house_source':{
+        url:'//user.lianjia.com/?filter=3',
+        text:'你关注的小区有<span class="unreadNumber">#{unread}</span>条新上'
+      },
+      'deal':{
+        url:'//user.lianjia.com/?filter=1',
+        text:'你关注的房源有<span class="unreadNumber">#{unread}</span>条成交'
+      },
+      'price_changed':{
+        url:'//user.lianjia.com/?filter=2',
+        text:'你关注的房源有<span class="unreadNumber">#{unread}</span>条变价'
+      },
+      'search:new':{
+        url:'//user.lianjia.com/?filter=4',
+        text:'你保存的搜索条件有<span class="unreadNumber">#{unread}</span>条变动'
+      },
+      'on_answer_insert_concern':{
+        url:'//user.lianjia.com/site/myWenda/?filter=1',
+        text:'您关注的问题有<span class="unreadNumber">#{unread}</span>条回复'
+      },
+      'on_answer_insert':{
+        url:'//user.lianjia.com/site/myWenda/',
+        text:'您提问的问题有<span class="unreadNumber">#{unread}</span>条回复'
+      },
+      'on_extra_answer_pass':{
+        url:'//user.lianjia.com/site/myWenda/?filter=2',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条新追答'
+      },
+      'on_special_question_pass':{
+        url:'//user.lianjia.com/site/myWenda/?filter=3',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条定向提问'
+      },
+      'on_extra_question_pass':{
+        url:'//user.lianjia.com/site/myWenda/?filter=4',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条追问'
+      },
+      'xuequ_bbs':{
+        url:'//user.lianjia.com/site/bbs?type=4',
+        text:'论坛有<span class="unreadNumber">#{unread}</span>条回复'
+      },
+      'ting_shou':{
+        url:'//user.lianjia.com/',
+        text:'您关注的<span class="unreadNumber">#{unread}</span>套房源已下架'
+      }
+    };
+    var agentPushMsgMap = $.extend({},userPushMsgMap,{
+      'on_extra_answer_pass':{
+        url:'//agent.lianjia.com/preference/wenda/?filter=2',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条新追答'
+      },
+      'on_special_question_pass':{
+        url:'//agent.lianjia.com/preference/wenda/?filter=3',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条定向提问'
+      },
+      'on_extra_question_pass':{
+        url:'//agent.lianjia.com/preference/wenda/?filter=4',
+        text:'您收到<span class="unreadNumber">#{unread}</span>条追问'
+      }
+    });
+    $.ajax({
+      url:interfaceUrl,
+      type:'get',
+      dataType:'jsonp',
+      success:function(rs){
+        if (rs.errno === 0) {
+          var msgMap = rs.data.is_agent ? agentPushMsgMap : userPushMsgMap;
+          var unread_num = 0;
+          for(var i in rs.data.group_by_type){
+            if(rs.data.group_by_type[i].unread !== 0 && msgMap.hasOwnProperty(i)){
+              unread_num = unread_num + rs.data.group_by_type[i].unread;
+            }
+          }
+          if(unread_num !== 0){
+            options.tipContainer.html(options.tipTpl.render({
+              unreadNum:unread_num
+            }));
+            options.container.html(options.msgTpl.render({
+              group_by_type:rs.data.group_by_type,
+              pushMsgMap:msgMap
+            }));
+          }
+        }
+      }
+    });
+  }
+}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * 跨域请求调用方
+ *
+ * 实现方式
+ * 1.判断是否支持ajax2. 如果支持，直接调用返回
+ * 2.如果不支持ajax2.采用messagerjs方式，首先加载跨域域名下 /service/api
+ * 3./service/api 的文件与lianjia-login/views/service/api 一致，直接复制即可
+ */
+!(__WEBPACK_AMD_DEFINE_RESULT__ = (function(require) {
+  var Model = $.EventEmitter,
+      crossRequest = __webpack_require__(37);
+  var env = __webpack_require__(8)
+  
+  
+  // var isSupport = window.FormData; // 暂时先采用引用方式登录
+  var isSupport = false;
+  var Cors = Model.extend({
+    initialize : function(option) {
+      var opt = {
+        url:"",
+        type:"get",
+        dataType:"json",
+        args:{}
+      }
+      
+      $.extend(opt, option);
+      opt.url = env.fixedUrl(opt.url);
+      opt.method = opt.type
+      
+      var _this = this;
+      
+      _this.opt = opt;
+      if (!isSupport) {
+        var host = env.fixedUrl($.parseURL(opt.url).host);
+        if(!env.isSameDomain(host)){
+          _this.crossRequest = crossRequest(host);
+        }else{
+          _this.isSame = true;
+        }
+      }
+    },
+    /**
+     *
+     * @param {Object} args
+      {
+        url:"/login/login",
+        data:{},
+        timeout:"2000",
+        type:"get"
+      }
+     */
+    request : function(args) {
+      var _this = this;
+      var opt = _this.opt
+      $.extend(opt.args,args);
+      opt.data = opt.args;
+      
+      if (isSupport || _this.isSame) {
+        return $.ajax(opt);
+      } else {
+        return this.crossRequest.request(opt);
+      }
+    }
+  });
+
+  return Cors;
+}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * 跨域请求
+ * 
+ */
+
+__webpack_require__(38);
+// require("./json2");
+ 
+!(__WEBPACK_AMD_DEFINE_RESULT__ = (function(require){
+  
+  
+  
+  var globalMessanger = new LJMessenger('LIANJIA_CROSS_MESSAGE', 'LIANJIA-CROSS');
+  globalMessanger.listen(function (msg) {
+     msg = JSON.parse(msg);
+     var name = msg.name;
+     if(globalMessanger.targets[name]){
+       if(msg.type == "state"){
+         globalMessanger.targets[name].readyState = "ready";
+         globalMessanger.targets[name].dealReady();
+       }else{
+         globalMessanger.targets[name].deal(msg.data,msg.success);
+       }
+     }
+  });
+  var PageMessage = {};
+  
+  var Message = function(domain,name){
+    var _this = this;
+    _this.domain =  domain;
+    name = name || $.parseURL(domain).host.replace(/\./g,"-")
+    _this.name = name;
+    _this.init();
+  }
+  function buildIframe(name,src){
+    var iframe = document.createElement("iframe");
+    iframe.id = name;
+    iframe.name = name;
+    
+    iframe.src = src;
+    
+    iframe.style.cssText = "display:none;width:0px;height:0px;";
+    iframe.width  = 0;
+    iframe.height = 0;
+    iframe.title = "empty";
+    
+    document.body.appendChild(iframe);
+    
+    return iframe;
+  }
+  $.extend(Message.prototype,{
+    init:function(){
+      var _this = this;
+      var iframeUrl = _this.domain+"/xd/api/?name="+_this.name;
+      
+      var iframe =buildIframe(_this.name,iframeUrl);
+      _this.iframe =iframe.contentWindow;
+      
+      globalMessanger.addTarget(_this.iframe, _this.name);
+      
+      _this.reqArray = [];
+      
+      globalMessanger.targets[_this.name].deal = function(msg,success){
+        globalMessanger.targets[_this.name].isRequest = false;
+        
+        var request = _this.reqArray.shift(),msgData = false;
+        try{
+          msgData = msg;
+        }catch(e){
+        }
+        success?request.defer.resolve(msgData):request.defer.reject(msgData);
+        _this.next();
+      };
+      globalMessanger.targets[_this.name].dealReady = function(){
+        _this.next();
+      };
+    },
+    next:function(){
+      var _this = this;
+      if(!globalMessanger.targets[_this.name].readyState){
+        return;
+      }
+      if(_this.reqArray.length && !globalMessanger.targets[_this.name].isRequest){
+        globalMessanger.targets[_this.name].isRequest = true;
+        var request = _this.reqArray[0];
+        var cmd = {
+          type:"request",
+          data:request.request
+        } 
+        var str = JSON.stringify(cmd);
+        globalMessanger.targets[_this.name].send(str);
+      }
+    },
+    request:function(args){
+      var _this = this;
+      
+      var defer = $.Deferred();
+      _this.reqArray.push({
+        defer:defer,
+        request:args
+      })
+      _this.next();
+      return defer;
+    }
+  })
+  
+  return function(domain,name){
+    if(PageMessage[domain]){
+      return PageMessage[domain];
+    }
+    return PageMessage[domain] = new Message(domain,name);
+  };
+}).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__))
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
+
+/**
+ *     __  ___
+ *    /  |/  /___   _____ _____ ___   ____   ____ _ ___   _____
+ *   / /|_/ // _ \ / ___// ___// _ \ / __ \ / __ `// _ \ / ___/
+ *  / /  / //  __/(__  )(__  )/  __// / / // /_/ //  __// /
+ * /_/  /_/ \___//____//____/ \___//_/ /_/ \__, / \___//_/
+ *                                        /____/
+ *
+ * @description MessengerJS, a common cross-document communicate solution.
+ * @author biqing kwok
+ * @version 2.0
+ * @license release under MIT license
+ */
+
+window.LJMessenger = (function(){
+    // 消息前缀, 建议使用自己的项目名, 避免多项目之间的冲突
+    // !注意 消息前缀应使用字符串类型
+    var prefix = "[LIANJIA_Messenger_CROSS]",
+        supportPostMessage = 'postMessage' in window;
+
+    // Target 类, 消息对象
+    function Target(target, name){
+        var errMsg = '';
+        if(arguments.length < 2){
+            errMsg = 'target error - target and name are both requied';
+        } else if (typeof target != 'object'){
+            errMsg = 'target error - target itself must be window object';
+        } else if (typeof name != 'string'){
+            errMsg = 'target error - target name must be string type';
+        }
+        if(errMsg){
+            throw new Error(errMsg);
+        }
+        this.target = target;
+        this.name = name;
+    }
+
+    // 往 target 发送消息, 出于安全考虑, 发送消息会带上前缀
+    if ( supportPostMessage ){
+        // IE8+ 以及现代浏览器支持
+        Target.prototype.send = function(msg){
+            this.target.postMessage(prefix + msg, '*');
+        };
+    } else {
+        // 兼容IE 6/7
+        Target.prototype.send = function(msg){
+            var targetFunc = window.navigator[prefix + this.name];
+            if ( typeof targetFunc == 'function' ) {
+                targetFunc(prefix + msg, window);
+            } else {
+                throw new Error("target callback function is not defined");
+            }
+        };
+    }
+
+    // 信使类
+    // 创建Messenger实例时指定, 必须指定Messenger的名字, (可选)指定项目名, 以避免Mashup类应用中的冲突
+    // !注意: 父子页面中projectName必须保持一致, 否则无法匹配
+    function Messenger(messengerName, projectName){
+        this.targets = {};
+        this.name = messengerName;
+        this.listenFunc = [];
+        prefix = projectName || prefix;
+        if(typeof prefix !== 'string') {
+            prefix = prefix.toString();
+        }
+        this.initListen();
+    }
+
+    // 添加一个消息对象
+    Messenger.prototype.addTarget = function(target, name){
+        var targetObj = new Target(target, name);
+        this.targets[name] = targetObj;
+    };
+
+    // 初始化消息监听
+    Messenger.prototype.initListen = function(){
+        var self = this;
+        var generalCallback = function(msg){
+            if(typeof msg == 'object' && msg.data){
+                msg = msg.data;
+            }
+            if(msg && typeof msg == "string" && msg.indexOf(prefix) >=0){
+              // 剥离消息前缀
+              msg = msg.slice(prefix.length);
+              for(var i = 0; i < self.listenFunc.length; i++){
+                  self.listenFunc[i](msg);
+              }
+            }
+        };
+
+        if ( supportPostMessage ){
+            if ( 'addEventListener' in document ) {
+                window.addEventListener('message', generalCallback, false);
+            } else if ( 'attachEvent' in document ) {
+                window.attachEvent('onmessage', generalCallback);
+            }
+        } else {
+            // 兼容IE 6/7
+            window.navigator[prefix + this.name] = generalCallback;
+        }
+    };
+
+    // 监听消息
+    Messenger.prototype.listen = function(callback){
+        this.listenFunc.push(callback);
+    };
+    // 注销监听
+    Messenger.prototype.clear = function(){
+        this.listenFunc = [];
+    };
+    // 广播消息
+    Messenger.prototype.send = function(msg){
+        var targets = this.targets,
+            target;
+        for(target in targets){
+            if(targets.hasOwnProperty(target)){
+                targets[target].send(msg);
+            }
+        }
+    };
+
+    return Messenger;
+})();
+
+
+/***/ })
+/******/ ]);
+//# sourceMappingURL=common.js.map

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>问答</title>
+
+		<link rel="stylesheet" href="./问答/common.css">
+		<link rel="stylesheet" href="./问答/main.css">
+		<style type="text/css">
+			.fl-box .btn-more {
+				position: absolute;
+				top: 20px;
+				right: 0;
+				color: #999;
+				line-height: 28px
+			}
+			
+			.fl-box .box-list li {
+				padding-top: 10px;
+				line-height: 20px;
+				border-bottom: 1px solid #eeeeee;
+				padding-bottom: 13px
+			}
+			
+			.fl-box .box-list li a {
+				display: block;
+				font-size: 14px;
+				color: #333;
+				word-wrap: break-word
+			}
+			
+			.fl-box .box-list li a:hover {
+				text-decoration: none
+			}
+			
+			.fl-box .box-list li i {
+				background: #f1f1f1;
+				color: #9f9f9f;
+				font-size: .65em;
+				display: inline-block;
+				padding: 0 6px;
+				margin-top: 12px
+			}
+			
+			.fl-box .box-list li.li-last {
+				border-bottom: 0;
+				padding-bottom: 0
+			}
+		</style>
+
+	</head>
+
+	<body>
+		<!--导航栏-->
+		<header class="lianjia-header ">
+			<div class="nav-wrap">
+				<div class="wrapper ">
+					<div class="fr nav  ">
+						<div class="fl">
+							<ul>
+								<li>
+									<a class="" href="#">租房</a>
+								</li>
+								<li>
+									<a class="" href="#">海外</a>
+								</li>
+								<li>
+									<a class="" href="#">小区</a>
+								</li>
+								<li class="hover">
+									<a class="" href="#">指南</a>
+									<div class="nav-list">
+										<dd>
+											<i></i>
+											<dl>
+												<a href="#">问答</a>
+											</dl>
+											<dl>
+												<a href="#">百科</a>
+											</dl>
+										</dd>
+									</div>
+								</li>
+								<li>
+									<a class="" href="#">房价</a>
+								</li>
+								<li>
+									<a class="" href="#" target="_blank">工具</a>
+								</li>
+								<li>
+									<a class="" href="#">经验</a>
+								</li>
+								<li>
+									<a class="" href="#" target="_blank">发布房源</a>
+								</li>
+							</ul>
+						</div>
+
+						<!--注册、登录-->
+						<div class="fr login">
+							<div class="ti-hover">
+								<div class="login-panel typeUserInfo">
+									<div class="typeShowUser">
+										<span class="welcome">
+											<a class="btn-register" href="#">
+											<span class="log">注册</span></a>|
+										<a class="btn-login bounceIn actLoginBtn" href="#">
+											<span class="reg">登录</span></a>
+										</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</header>
+
+		<div class="wrapper">
+			<!-- 首页左侧 -->
+			<div class="min-left fl">
+				<div class="fl-box">
+					<div class="m-box ">
+						<a href="#" target="_blank">
+							<b><strong>买房</strong></b>
+						</a>
+						<ul>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>房价行情</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>购房建议</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>购房资质</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>买房风险</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>二手房</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>新房</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>海外买房</h2>
+								</a>
+							</li>
+							<div class="clear"></div>
+						</ul>
+					</div>
+					<div class="m-box ">
+						<a href="#" target="_blank"><b><strong>交易过户</strong></b></a>
+						<ul>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>税费计算</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>认购签约</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>资金监管</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>过户流程</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>入住交接</h2>
+								</a>
+							</li>
+							<div class="clear"></div>
+						</ul>
+					</div>
+					<div class="m-box ">
+						<a href="#" target="_blank"><b><strong>卖房</strong></b></a>
+						<ul>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>房屋估价</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>卖房流程</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>出售方案</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>业主风险</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>卖旧买新</h2>
+								</a>
+							</li>
+							<div class="clear"></div>
+						</ul>
+					</div>
+					<div class="m-box ">
+						<a href="#" target="_blank"><b><strong>贷款</strong></b></a>
+						<ul>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>贷款利率</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>首付月供</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>贷款流程</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>住房公积金</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>商业贷款</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>融资借款</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>金融方案</h2>
+								</a>
+							</li>
+							<div class="clear"></div>
+						</ul>
+					</div>
+					<div class="m-box last">
+						<a href="#" target="_blank"><b><strong>其他</strong></b></a>
+						<ul>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>房产政策</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>法律纠纷</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>保障住房</h2>
+								</a>
+							</li>
+							<li>
+								<a class="LOGCLICK" href="#" target="_blank">
+									<h2>其他</h2>
+								</a>
+							</li>
+							<div class="clear"></div>
+						</ul>
+					</div>
+				</div>
+
+				<!--最新问题-->
+				<div class="fl-box">
+					<h2 class="title">最新问题</h2>
+					<a class="btn-more" href="#">查看更多</a>
+					<div class="box-list">
+						<ul>
+							<li class="">
+								<span>
+									<a class="LOGCLICK" href="#" target="_blank">求推荐总价850万以内、地铁6号线沿线的两居或三居</a>
+								</span>
+								<i>8小时前</i>
+							</li>
+							<li class="">
+								<span>
+									<a class="LOGCLICK" href="#" target="_blank">房子过户需要复印户口本哪几页？</a>
+								</span>
+								<i>9小时前</i>
+							</li>
+							<li class="">
+								<span>
+									<a class="LOGCLICK" href="#" target="_blank">非京籍家庭，子女已经有在北京购房的条件，父母能帮子女还贷么？</a>
+								</span>
+								<i>9小时前</i>
+							</li>
+							<li class="">
+								<span>
+									<a class="LOGCLICK" href="#" target="_blank">请问苏南常州以后会有宅基地店面覆盖吗？</a>
+								</span>
+								<i>10小时前</i>
+							</li>
+							<li class="li-last">
+								<span>
+									<a class="LOGCLICK" href="#" target="_blank">订金，首付都打给了房东，现在贷款过不了，怎么办？</a>
+								</span>
+								<i>13小时前</i>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="min-right fr">
+				<!-- 右侧搜索框 -->
+				<div class="search">
+					<div class="tex">
+						<input type="text" placeholder="房产知识有疑问？来搜搜吧~" id="tex">
+						<div class="sub" data-dianji="find_qustion">找答案</div>
+						<i></i>
+					</div>
+					<div class="go">
+						<a href="about:blank" target="_blank" data-dianji="find_ask"><i></i>去提问</a>
+					</div>
+					<div class="clear"></div>
+				</div>
+
+				<!-- 问答日报 -->
+				<div class="count">
+					<div class="name">
+						<h2 class="fl">问答日报</h2>
+						<div class="fr"><i class="ico"></i>已有<label class="sp">299906</label>位用户参与</div>
+					</div>
+					<div class="cun">
+						<div class="fl">
+							<a class="img" id="squareDiv" href="#" target="_blank">
+								<img src="./问答/wenda1541994065phpgDltp5.jpeg" style="left: -80.9875px;">
+							</a>
+						</div>
+						<div class="fr">
+							<div class="c-name">
+								<a href="#" target="_blank"><span><i>精</i>求推荐总价600万以内的二居室，海淀或者西城区域</span></a>
+								<label>2018-11-12</label>
+								<p>预算总价600万以内在海淀或者西城买一套二居，为了孩子上学，学校好点、房子有合适的吗？ </p>
+							</div>
+							<ul>
+								<li><i></i>
+									<a href="#" target="_blank">请推荐总价500万预算的房源，朝阳区北面或者东北方向有地铁的</a><span>2018-11-12</span>
+								</li>
+								<li><i></i>
+									<a href="#" target="_blank">请推荐800万-1000万左右望京一百平以上南北通透三居室谢</a><span>2018-11-12</span>
+								</li>
+								<li><i></i>
+									<a href="#" target="_blank">请推荐总价700万内近地铁两居室</a><span>2018-10-31</span>
+								</li>
+							</ul>
+						</div>
+						<div class="clear"></div>
+					</div>
+				</div>
+
+				<!--右中-->
+				<div class="fangan">
+					<a href="#" target="_blank">
+						<span class="tit">买房难？了解专业购房方案</span>
+						<span class="subtit">资深置业顾问正在等候您的提问</span>
+						<img src="./问答/zhuanjia.png" alt="">
+					</a>
+					<a href="#" target="_blank">
+						<span class="tit">总价300万起临铁房</span>
+						<span class="subtit">买房版十万个为什么都有解</span>
+						<img src="./问答/wenda1528194873php9zsaHS.jpeg" alt="">
+					</a>
+				</div>
+				<!-- 顾问推荐 -->
+				<div class="count agent">
+					<div class="agent-list">
+						<div class="name">
+							<span class="fl">顾问推荐</span>
+							<div class="fr">
+								<a href="#" target="_blank">查看全部 <i>143</i> 位顾问</a>
+							</div>
+						</div>
+						<div class="l-box">
+							<div class="fl">
+								<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+									<img src="./问答/wenda1459929605phpNUztIJ.jpeg.100x100.jpg">
+								</a>
+							</div>
+							<div class="fr cunn">
+								<div class="fl">
+									<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+										<b>13****19</b>
+									</a>
+									<p>本人长时间从事房地产行业，有丰富的实操经验；熟悉买房、卖房、贷款等各类交易环节，尤其擅长税费计算、交易过户、贷款流程...</p>
+									<div class="tips">
+										<i>擅长交易</i>
+										<i>擅长贷款</i>
+									</div>
+								</div>
+								<div class="fr">
+									<a href="#" target="_blank" class="tw">向TA提问</a>
+									<span>
+											<a href="#" target="_blank">已回答 2243 个问题</a>
+										</span>
+								</div>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="l-box">
+							<div class="fl">
+								<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+									<img src="./问答/wenda1481269543phpB0xzYo.png.100x100.jpg">
+								</a>
+							</div>
+							<div class="fr cunn">
+								<div class="fl">
+									<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+										<b>15****56</b>
+									</a>
+									<p>房产交易知识顾问，从业经历丰富，熟悉房屋买卖交易的各个流程，擅长交易过户、贷款流程。为每个客户提供准确、贴心的解答，...</p>
+									<div class="tips">
+										<i>擅长交易</i>
+										<i>擅长贷款</i>
+									</div>
+								</div>
+								<div class="fr">
+									<a href="#" target="_blank" class="tw">向TA提问</a>
+									<span>
+										<a href="#" target="_blank">已回答 1308 个问题</a>
+									</span>
+								</div>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="l-box" style="border-bottom:0px;padding-bottom:7px;">
+							<div class="fl">
+								<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+									<img src="./问答/4108523d-9dd5-4d42-987e-55d41a0712df.jpg.100x100.jpg">
+								</a>
+							</div>
+							<div class="fr cunn">
+								<div class="fl">
+									<a href="#" target="_blank" class="LOGCLICK" data-log_id="30001" data-bl="expert" data-el="site">
+										<b>15****99</b>
+									</a>
+									<p> 我来自美丽的东北冰城哈尔滨，大家都说我没有东北人性格，特别像南方人，腼腆和细腻。工作快四年了，...</p>
+									<div class="tips">
+										<i>擅长买房</i>
+										<i>擅长卖房</i>
+									</div>
+								</div>
+								<div class="fr">
+									<a href="#" target="_blank" class="tw">向TA提问</a>
+									<span>
+							<a href="#" target="_blank">已回答 1274 个问题</a>
+						</span>
+								</div>
+							</div>
+							<div class="clear"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>	
+		
+	</body>
+
+</html>

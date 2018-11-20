@@ -1,0 +1,723 @@
+// 当页面离开时发送页面停留时长log
+(function() {
+	var throttle = function(fn, time) {
+		var last_exec = new Date().getTime();
+		var timeout_id;
+
+		return function() {
+			var that = this;
+
+			var args = Array.prototype.slice.call(arguments, 0);
+
+			function exec() {
+				last_exec = new Date().getTime();
+				fn.apply(that, args);
+				timeout_id = null;
+			}
+
+			timeout_id && clearTimeout(timeout_id);
+
+			var now = new Date().getTime();
+			var waitTime = time - (now - last_exec);
+
+			if (waitTime > 0) {
+				timeout_id = setTimeout(function() {
+					exec();
+				}, waitTime)
+			} else {
+				exec();
+			}
+
+		}
+	}
+
+	function isView(el) {
+		el = $(el);
+		var offset = el.offset()
+
+		var totalHeight = document.documentElement.clientHeight;
+		var totalWidth = document.documentElement.clientWidth;
+
+		var scrollTop = document.documentElement.scrollTop;
+		var scrollLeft = document.documentElement.scrollLeft;
+
+
+		// 是否超过底部 判断垂直方向
+		// if ((offset.top < scrollTop + totalHeight) && offset.top > scrollTop) {
+		// 	if ((offset.left < scrollLeft + totalWidth) && offset.left > scrollLeft) {
+		// 		return true;
+		// 	}
+		// }
+
+		var po = el.offset().top + el.height();
+		if ((po <= scrollTop + totalHeight) && po >= scrollTop) {
+			return true;
+		}
+
+		return false;
+	}
+
+	// 检测所有带曝光打点的标签
+	function testView() {
+		$("[data-view-ulog]").not(".has-view").each(function() {
+			if (isView($(this))) {
+				$(this).addClass("has-view")
+				window.OCULOG_SEND && window.OCULOG_SEND("10905", {
+					action: {
+						link_type: $(this).data("link-type")
+					}
+				});
+			}
+		});
+	}
+
+	// 如果throttle 另外使用第三方的请修改这段
+	window.onscroll = throttle(function() {
+		testView();
+	}, 500);
+	$("body").ready(function () {
+		testView();
+		//新埋点
+		try{if(!!_new_dig_action_PC.pid){delete window.__UDL_CONFIG.ljweb_channel_key;window.$ULOG.send("1,3",$.extend({},{event:"$pageview",event_name:"页面访问"},_new_dig_action_PC))}}catch(e){console.log(e)}
+	});
+
+	window.OCULOG_SEND = function(id, params) {
+		params = params || {};
+		params.ljweb_channel_key = params.ljweb_channel_key || ljweb_channel_key;
+		params.action = params.action || {};
+		params.action["nation_id"] = params.action["nation_id"] || _old_dig_nation_id;
+		if(_old_dig_ucid) params.ucid = _old_dig_ucid || "";
+		if(_old_dig_cid) params.cid = _old_dig_cid || "";
+		try{
+			console.log("sendUlog:",id,params)
+			if(window.$ULOG){
+				window.$ULOG.send(id, params);
+			}else{
+				setTimeout(function(){
+					window.OCULOG_SEND(id,params);
+				},1000);
+			}
+		}catch(e){
+			console.log("window.$ULOG:",window.$ULOG);
+		}
+	}
+	window.OCULOG_SEND_NEW = function(evt_id, params) {
+		params = $.extend({},digAction[evt_id],params,{pid:_new_dig_action_PC.pid,h5pid:_new_dig_action_PC.h5pid,mac_id:_new_dig_action_PC.mac_id,uicode:_new_dig_action_PC.uicode});
+		params.action = params.action || {};
+		params.action["nation_id"] = _new_dig_action_PC.action["nation_id"] || '';
+		try{
+			if(window.$ULOG){
+				window.$ULOG.send(evt_id, params);
+			}else{
+				setTimeout(function(){
+					window.OCULOG_SEND_NEW(evt_id,params);
+				},1000);
+			}
+		}catch(e){
+			console.log("window.$ULOG:",window.$ULOG + "e"+ e);
+		}
+	}
+
+	const digAction = {
+		12007: {
+			evt:12007,
+			event:"mElementExpo",
+			event_name:"频道入口_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12008:{
+			evt:12008,
+			event:"mElementClick",
+			event_name:"频道入口_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12009:{
+			evt:12009,
+			event:"mElementExpo",
+			event_name:"讲座卡片_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				lecture_id:"",
+			}
+		},
+		12010:{
+			evt:12010,
+			event:"mElementClick",
+			event_name:"讲座卡片_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				lecture_id:"",
+			}
+		},
+		12011:{
+			evt:12011,
+			event:"mElementExpo",
+			event_name:"广告位_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				ad_id:"",
+			}
+		},
+		12012:{
+			evt:12012,
+			event:"mElementClick",
+			event_name:"广告位_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				ad_id:"",
+			}
+		},
+		12013:{
+			evt:12013,
+			event:"mElementExpo",
+			event_name:"顾问列表_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				agent_ucid:"",
+			}
+		},
+		12014:{
+			evt:12014,
+			event:"mElementClick",
+			event_name:"顾问列表_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				agent_ucid:"",
+			}
+		},
+		12015:{
+			evt:12015,
+			event:"mElementExpo",
+			event_name:"内容分类tab_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12016:{
+			evt:12016,
+			event:"mElementClick",
+			event_name:"内容分类tab_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12017:{
+			evt:12017,
+			event:"mElementExpo",
+			event_name:"内容列表_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				article_id:"",
+			}
+		},
+		12018:{
+			evt:12018,
+			event:"mElementClick",
+			event_name:"内容列表_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				article_id:"",
+			}
+		},
+		12019:{
+			evt:12019,
+			event:"mElementClick",
+			event_name:"切换国家入口_点击",
+			action:{
+				nation_id:""
+			}
+		},
+		12020:{
+			evt:12020,
+			event:"mElementClick",
+			event_name:"切换国家选项_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+			}
+		},
+		12021:{
+			evt:12021,
+			event:"mElementClick",
+			event_name:"顶部搜索框_点击",
+			action:{
+				nation_id:""
+			}
+		},
+		12022:{
+			evt:12022,
+			event:"mElementClick",
+			event_name:"内容搜索按钮_点击",
+			action:{
+				nation_id:""
+			}
+		},
+		12026:{
+			evt:12026,
+			event:"mElementExpo",
+			event_name:"展位模块_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				item_type:"",//可枚举
+				agent_ucid:"",
+			}
+		},
+		12027:{
+			evt:12027,
+			event:"mElementClick",
+			event_name:"电话拨号_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				item_type:"",//可枚举
+				agent_ucid:"",
+			}
+		},
+		12028:{
+			evt:12028,
+			event:"mElementClick",
+			event_name:"留言提交_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				agent_ucid:"",
+				item_type:""
+			}
+		},
+		12921: {
+			evt:12921,
+			event:"mElementClick",
+			event_name:"留言提交成功_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				agent_ucid:"",
+				item_type:""
+			}
+		},
+		12609: {
+			evt:12609,
+			event:"mElementClick",
+			event_name:"IM发送_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				agent_ucid:"",
+				item_type:"agent"
+			}
+
+		},
+		12030:{
+			evt:12030,
+			event:"mElementClick",
+			event_name:"地址_点击",
+			action:{
+				nation_id:""
+			}
+		},
+		12031:{
+			evt:12031,
+			event:"mElementClick",
+			event_name:"模块详情扩展_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+			}
+		},
+		12032:{
+			evt:12032,
+			event:"mElementExpo",
+			event_name:"搜索框sug_曝光",
+			action:{
+				nation_id:"",
+				sug_condition:"",
+				item_type:"",//可枚举
+				sug_result:"",
+			}
+		},
+		12034:{
+			evt:12034,
+			event:"mElementClick",
+			event_name:"头像_点击",
+			action:{
+				nation_id:"",
+				item_type:"",
+				agent_ucid:"",
+			}
+		},
+		12035:{
+			evt:12035,
+			event:"mElementExpo",
+			event_name:"推荐房源_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_id:"",
+				resblock_id:"",
+			}
+		},
+		12037:{
+			evt:12037,
+			event:"mElementClick",
+			event_name:"推荐讲座_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				lecture_id:"",
+			}
+		},
+		12038:{
+			evt:12038,
+			event:"mElementClick",
+			event_name:"搜索框sug_点击",
+			action:{
+				nation_id:"",
+				sug_condition:"",
+				item_type:"",//可枚举
+				sug_result:"",
+				element_title:"",
+				element_index:0,
+			}
+		},
+		12039:{
+			evt:12039,
+			event:"mElementClick",
+			event_name:"列表页filter选项_点击",
+			action:{
+				nation_id:"",
+				filter_value:"",
+				filter_type:"",
+				item_type:"",
+				type:"",
+				field_title:""
+			}
+		},
+		12063:{
+			evt:12063,
+			event:"mElementClick",
+			event_name:"列表页filter多选提交_点击",
+			action:{
+				nation_id:"",
+				filter_value:"",
+				filter_type:"",
+				item_type:""
+			}
+		},
+		12076:{
+			evt:12076,
+			event:"mElementClick",
+			event_name:"搜索筛选请求",
+			action:{
+				nation_id:"",
+				search_condition:"",
+				search_result:"",
+				item_type:""
+			}
+		},
+		12077:{
+			evt:12077,
+			event:"mElementClick",
+			event_name:"页面头图_点击",
+			action:{
+				nation_id:"",
+				pic_id:"",
+			}
+		},
+		12078:{
+			evt:12078,
+			event:"mElementExpo",
+			event_name:"房源列表_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_id:"",
+				resblock_id:"",
+			}
+		},
+		12079:{
+			evt:12079,
+			event:"mElementClick",
+			event_name:"房源列表_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_id:"",
+				resblock_id:"",
+			}
+		},
+		12080:{
+			evt:12080,
+			event:"mElementExpo",
+			event_name:"页面头图_曝光",
+			action:{
+				pic_id:"",
+				nation_id:""
+			}
+		},
+		12081:{
+			evt:12081,
+			event:"mElementClick",
+			event_name:"分享_点击",
+			action:{
+				agent_ucid:"",
+				nation_id:"",
+				share_url:"",
+				share_type:"",
+				platform:""
+			}
+		},
+		12085:{
+			evt:12085,
+			event:"mElementExpo",
+			event_name:"户型卡片_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_frame:"",
+			}
+		},
+		12086:{
+			evt:12086,
+			event:"mElementClick",
+			event_name:"户型卡片_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_frame:"",
+			}
+		},
+		12091:{
+			evt:12091,
+			event:"mElementExpo",
+			event_name:"户型标签_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_frame:"",
+			}
+		},
+		12096:{
+			evt:12096,
+			event:"mElementClick",
+			event_name:"户型标签_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_frame:"",
+			}
+		},
+		12097:{
+			evt:12097,
+			event:"mElementExpo",
+			event_name:"标签_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12098:{
+			evt:12098,
+			event:"mElementClick",
+			event_name:"标签_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0
+			}
+		},
+		12102:{
+			evt:12102,
+			event:"mElementClick",
+			event_name:"推荐房源_点击",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				house_id:"",
+				resblock_id:""
+			}
+		},
+		12103:{
+			evt:12103,
+			event:"mElementExpo",
+			event_name:"推荐讲座_曝光",
+			action:{
+				nation_id:"",
+				element_title:"",
+				element_index:0,
+				item_type:"" //可枚举
+			}
+		},
+		12104:{
+			evt:12104,
+			event:"mElementExpo",
+			event_name:"推荐文章_曝光",
+			action:{
+				nation_id:"",
+				element_index:0,
+				article_id:"",
+				item_type:"" //可枚举
+			}
+		},
+		12105:{
+			evt:12105,
+			event:"mElementClick",
+			event_name:"推荐文章_点击",
+			action:{
+				nation_id:"",
+				element_index:0,
+				article_id:"",
+				item_type:"" //可枚举
+			}
+		},
+		12181:{
+			evt:12181,
+			event:"mElementClick",
+			event_name:"返回大首页入口_点击"
+		},
+		12427: {
+			evt: 12427,
+			event:"mElementClick",
+			event_name:"商学院列表_点击",
+			action: {
+				element_title:"",
+				element_index:0,
+				article_id:0,
+				nation_id:""
+			}
+		},
+		12428: {
+			evt: 12428,
+			event:"mElementExpo",
+			event_name:"商学院列表_曝光",
+			action: {
+				element_title:"",
+				element_index:0,
+				article_id:0,
+				nation_id:""
+			}
+		},
+		12429: {
+			evt: 12429,
+			event:"mElementClick",
+			event_name:"商学院分类tab_点击",
+			action: {
+				element_title:"",
+				element_index:0,
+				nation_id:""
+			}
+		},
+		12430: {
+			evt: 12430,
+			event:"mElementExpo",
+			event_name:"商学院分类tab_曝光",
+			action: {
+				element_title:"",
+				element_index:0,
+				nation_id:""
+			}
+		},
+		12434: {
+			evt: 12434,
+			event:"mElementExpo",
+			event_name:"更多他的课程_曝光",
+			action: {
+				agent_ucid: ""
+			}
+		},
+		12435: {
+			evt: 12435,
+			event:"mElementExpo",
+			event_name:"头像_曝光",
+			action: {
+				agent_ucid: ""
+			}
+		},
+		12441: {
+			evt: 12441,
+			event:"mElementClick",
+			event_name:"筛选_点击",
+			action: {
+				nation_id: ""
+			}
+		},
+		12031: {
+			evt: 12031,
+			event:"mElementClick",
+			event_name:"模块详情扩展_点击",
+			action: {
+				nation_id: "",
+				element_title: "",
+				module_title: ""
+			}
+		},
+		12034: {
+			evt: 12034,
+			event:"mElementClick",
+			event_name:"头像_点击",
+			action: {
+				agent_ucid: "",
+				item_type: "",
+				nation_id: ""
+			}
+		},
+		12020: {
+			evt: 12020,
+			event:"mElementClick",
+			event_name:"切换国家选项_点击",
+			action: {
+				element_title: "",
+				element_index: "",
+				nation_id: ""
+			}
+		},
+		12922: {
+			evt: 12922,
+			event: "mElementExpo",
+			event_name: "模块详情扩展更多全部等_曝光",
+			action: {
+				nation_id: "",
+				element_title: "",
+				module_title: ""
+			}
+		}
+	};
+})();

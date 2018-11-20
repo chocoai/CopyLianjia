@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Content-language" content="zh-CN">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="applicable-device" content="pc">
+    <link rel="alternate" media="only screen and (max-width: 640px)" href="https://m.zhaijidi.com/sh/yezhu/maifang/">
+    <meta name="mobile-agent" content="format=html5;url=https://m.zhaijidi.com/sh/yezhu/maifang/">
+    <script type="text/javascript" async="" src="https://s1.ljcdn.com/feroot/pc/asset/common/advert.js?_v=20181108180132"></script>
+    <script type="text/javascript" async="" src="./sale_house_files/mvl.js.下载"></script>
+    <script async="" src="./sale_house_files/analytics.js.下载"></script>
+    <script type="text/javascript" async="" src="./sale_house_files/collect.js.下载"></script>
+    <script src="./sale_house_files/hm.js.下载"></script>
+    <script>
+        ljConf = {
+        city_id: '310000',
+        city_abbr: 'sh',
+        city_name: '上海',
+        channel: 'yezhu',
+        page: 'yezhu_maifang',
+        pageConfig: {"ajaxroot":"\/\/ajax.api.zhaijidi.com\/","imAppid":"zhaijidi_WEB_20160624","imAppkey":"6dfdcee27d78b1107fceeca55d80b7bd"},
+        feroot: '//s1.ljcdn.com/feroot/',
+        ucid:'',
+        cdn:'0',
+        };
+    </script>
+
+<!-- 2017.11.8 市场需求加上新的统计 -->
+<!-- 2017.7.18 开放全国 -->
+    <title>我要卖房|上海业主个人委托卖房卖房_二手房房屋出售_房屋交易（宅基地网）</title>
+    <meta name="keywords" content="上海业主卖房,上海个人卖房,我要卖房,上海委托卖房卖房,二手房房屋出售,房屋交易">
+    <link href="https://sh.zhaijidi.com/favicon.ico" type="image/x-icon" rel="icon">
+    <link href="https://sh.zhaijidi.com/favicon.ico" type="image/x-icon" rel="shortcut icon">
+    <link rel="stylesheet" href="./sale_house_files/common.css">
+    <link rel="stylesheet" href="./sale_house_files/index.css">
+    <div class="banner">
+      <div class="container">
+        <ul class="channelList">
+          <li><a href="index.html">首页</a></li>
+          <li class=""><a href=#">二手房</a></li>
+          <li class=""><a href="newh.html">新房</a></li>
+          <li class=""><a href="rent_house.html">租房</a></li>
+          <li class=""><a href="oversea.html">海外</a></li>
+          <li class=""><a>商业办公</a></li>
+          <li class=""><a>小区</a></li>
+          <li class=""><a>指南</a>
+          <div class="childList">
+            <a href="问答页面/问答页面.html">问答</a>
+            <a href="#">百科</a>
+          </div>
+          </li>
+          <li class=""><a href="#" target="_blank">工具</a></li>
+          <li class=""><a href="#" target="_blank">发布房源</a></li>
+        </ul>
+        <div class="banner-right">
+          <div class="login" id="userInfoContainer"><i></i>
+            <a href="#" id="loginBtn" rel="nofollow">登录</a>/
+            <a href="register.html" id="registerBtn" rel="nofollow">注册</a>
+          </div>
+          <div class="phone"><i></i><span>热线电话0000-6666</span></div></div></div></div>
+
+
+<script type="text/template" id="userInfoTpl">
+  <i></i>
+  <%if(isAgent){%>
+    <a id="userNameContainer" href="<%=$.env.fixedUrl('//agent.zhaijidi.com/')%>"><%=username%></a>
+  <%}else{%>
+    <a id="userNameContainer" href="<%=$.env.fixedUrl('//user.zhaijidi.com/')%>" rel="nofollow"><%=username%></a>
+  <%}%>
+  <span id="tipContainer"></span>
+  &nbsp;&nbsp;<a href="<%=logoutUrl%>">退出</a>
+  <span id="pushNewsListContainer"></span>
+</script>
+<script type="text/template" id="pushNewsListTpl">
+  <div class="pushNewsList">
+    <%for(var i in group_by_type){%>
+      <%if(group_by_type[i].unread !== 0 && pushMsgMap.hasOwnProperty(i)){%>
+        <a href="<%=pushMsgMap[i].url%>"><%=$.replaceTpl(pushMsgMap[i].text, {unread:group_by_type[i].unread})%></a>
+      <%}%>
+    <%}%>
+  </div>
+</script>
+
+
+<div class="header"><div class="wrap"><a href="sale_house.html" class="logo"></a><div class="nav"><ul><li><a href="sale_house.html" class="active">我要卖房</a></li><li><a href="sale_house.html">我要估价</a></li><li><a href="sale_house.html">我要出租</a></li></ul></div><a href="sale_house.html" target="_blank" class="app"><span class="icon-app"></span></a></div></div>
+
+<div class="g-main" style="padding-bottom:0;margin-bottom:-45px;"><div class="m-jumbotron"><div class="tit">发布出售房源</div><div class="sub-tit">8000+全国宅基地门店·10万+全国经纪人·宅基地倾情服务15年+</div></div><div class="m-form">
+  <div class="box-l m-entry">
+    <dl class="compact">
+      <dt>小区所在城市</dt>
+      <dd>
+        <div>上海</div>
+      </dd>
+    </dl>
+    <dl>
+      <dt>小区</dt>
+      <dd class="wrap-sug">
+        <div class="u-sug" id="u-sug">
+          <input class="sugInput" name="resblock" type="text" autocomplete="off" placeholder="请输入小区名">
+          <ul style="display: none;"></ul>
+        </div>
+      </dd>
+    </dl>
+    <dl>
+      <dt>房屋地址</dt>
+      <dd>
+          <div class="u-select u-select-build" name="building">
+            <input placeholder="楼栋号" class="u-select-selected" type="text" value="">
+            <ul class="u-select-options hide" style="display: none;"></ul>
+          </div>
+          <div class="u-select u-select-build" name="unit">
+            <input placeholder="单元号" class="u-select-selected" type="text" value="">
+            <ul class="u-select-options hide" style="display: none;"></ul>
+          </div>
+          <div class="u-select u-select-build" name="house">
+            <input placeholder="门牌号" class="u-select-selected" type="text" value="">
+            <ul class="u-select-options hide" style="display: none;"></ul>
+          </div>
+      </dd>
+    </dl>
+          <dl>
+        <dt>期望售价</dt>
+        <dd>
+          <input name="expect_price" value="" type="text" placeholder="请输入您期望卖出的价格" autocomplete="off" style="width: 210px;">
+          <div class="unit">万元</div>
+                      <a href="#" target="_blank" class="link-gujia">不太清楚如何定价? 先估个价</a>
+                  </dd>
+      </dl>
+        <dl>
+      <dt>称呼</dt>
+      <dd>
+        <input name="owner_name" value="" type="text" placeholder="我们应该如何称呼您" autocomplete="off" style="width: 250px;">
+      </dd>
+    </dl>
+    <dl>
+      <dt>手机号码</dt>
+      <dd>
+        <input name="owner_mobile" id="user_mobile" value="" type="text" placeholder="您的联系方式，方便我们及时与您联系" autocomplete="off" style="width: 250px;">
+      </dd>
+    </dl>
+    <dl class="sms-dl">
+      <dt>图形验证码</dt>
+      <dd>
+        <input name="verify_code" id="verify_pic" class="actVerifyInput" value="" type="text" placeholder="请输入图形验证码中的结果" autocomplete="off" style="width: 170px;">
+        <!-- <div class="btn-getcode-voice">获取语音验证码</div> -->
+        <!-- <div class="btn-getcode-sms">获取短信验证码</div> -->
+        <div class="btn-getcode-sms"><img src="./sale_house_files/GeneratePictureUpgrade" style="width:100%;height:100%;"></div>
+      </dd>
+    </dl>
+    <dl class="sms-dl">
+      <dt>短信验证码</dt>
+      <dd>
+        <input name="verify_sms" value="" type="text" placeholder="请输入短信验证码中的结果" autocomplete="off" style="width: 170px;">
+        <button class="btn-get-sms">获取短信验证码</button>
+      </dd>
+    </dl>
+  </div>
+      <div class="box-r m-deal">
+      <div class="hd">
+        <div id="tpl-r-dealprice">
+  <div class="tit">上海市 成交均价</div>
+  <div class="sub-tit">
+    
+      <span class="num">54761</span>
+      <span class="unit">元/㎡</span>
+    
+  </div>
+</div>
+        <div class="btn-qrcode">
+          <div class="icon-qrcode"></div>
+          <div class="layer-qrcode">
+            <div class="icon-qrcode"></div>
+            <div class="txt">去宅基地APP提升卖房速度</div>
+            <div class="sub-txt">APP·移动卖房新体验</div>
+          </div>
+        </div>
+      </div>
+      <div id="tpl-r-relatedhouse"></div>
+    </div>
+  </div>
+
+<div class="m-submit">
+  <div class="wrap">
+    <div class="btn-submit">提交委托</div>
+          <div class="btn-liwu" style="display:none;">
+        <div class="icon-liwu"></div>
+        <div class="txt">委托有礼</div>
+        <div class="summary">
+          <p>在线委托赠送<b>1000</b>家基金好礼！</p>
+          <p>完成实勘图片采集后，奖励<b>300</b>家基金；</p>
+          <p>签订速销协议后，奖励<b>700</b>家基金。</p>
+        </div>
+      </div>
+      </div>
+</div>
+<div class="m-process">
+  <div class="hd">卖房全流程</div>
+  <ul class="bd">
+    <li>
+      
+      <div class="tit">发布房源</div>
+      <div class="sub-tit">在线上免费发布房源</div>
+    </li>
+    <li>
+      
+      <div class="tit">核对房源</div>
+      <div class="sub-tit">30分钟内宅基地客服联系</div>
+    </li>
+    <li><div class="tit">在线销售</div><div class="sub-tit">在宅基地APP移动管理销售</div></li><li><div class="tit">签约出售</div><div class="sub-tit">签约过户宅基地全程服务</div></li></ul></div><div class="m-gujia"><div class="wrap"><div class="text"><div class="tit">不知道如何定价？</div><div class="sub-tit">宅基地专业房屋估值，为您提供卖房买房价格参考</div></div></div></div><div class="m-getapp">
+<script id="tpl-dealprice" type="text/html">
+  <div class="tit"><%= data.cityName %> 成交均价</div>
+  <div class="sub-tit">
+    <% if(data.monthTrans) { %>
+      <span class="num"><%= data.monthTrans %></span>
+      <span class="unit">元/㎡</span>
+    <% }else { %>
+      暂无数据
+    <% } %>
+  </div>
+</script>
+<script id="tpl-relatedhouse" type="text/html">
+  <% var list = data.list; %>
+  <% var submitData = data.submitData; %>
+  <% if(list.length) { %>
+    <ul class="bd">
+      <% for(var i = 0; i < list.length; i++) { %>
+        <% var item = list[i]; %>
+        <li>
+          <a href="<%= item.viewUrl %>" class="tit" target="_blank"><%= item.title %> - <%= item.jushi %>/<%= item.area %>平米</a>
+          <span class="time">
+            <% if(ljConf.city_id == '420100') { %>
+              挂牌时间 <%= item.onListDate %>
+            <% }else { %>
+              签约时间 <%= item.signTime %>
+            <% } %>
+          </span>
+          <span class="num"><%= item.price %>万</span>
+        </li>
+      <% } %>
+    </ul>
+    <div class="ft">
+      <% if(ljConf.city_id == '420100') { %>
+        <a href="<%= submitData.community_id ? ('/ershoufang/c' + submitData.community_id + '/') : '/ershoufang/' %>" target="_blank">查看更多在售明细</a>
+      <% }else { %>
+        <a href="<%= submitData.community_id ? ('/chengjiao/c' + submitData.community_id + '/') : '/chengjiao/' %>" target="_blank">查看更多成交明细</a>
+      <% } %>
+    </div>
+  <% } %>
+</script>
+<div class="m-success"><div class="marsk"></div><div class="box"><div class="box-l"><div class="icon-weituo-success"></div><div class="tit">提交委托成功！</div><div class="sub-tit">周一至周日9:00-20:00，10109666客服会及时给您回电，请耐心等待</div><div class="line">下载掌上宅基地APP</div><div class="item bold"><div>去APP管理委托</div><div>去APP领取家基金</div></div><div class="item"><div>登录业主中心查看同类房子实时成交<br>主动介绍房子吸引更多买家关注</div><div>完成实勘图片采集后，奖励300家基金<br>签订速销协议后，奖励700家基金</div></div></div><div class="box-r"><div class="icon-qrcode"></div><div class="txt">扫一扫·下载掌上宅基地</div></div><div class="icon-close"></div></div></div></div><div class="footer"><div class="wrapper"><div class="f-title"><div class="fl"><ul><li><a rel="nofollow" target="_blank">了解宅基地</a></li><li><a  rel="nofollow" target="_blank">关于宅基地</a></li><li><a rel="nofollow" target="_blank">联系我们</a></li><li><a rel="nofollow" target="_blank">加入我们</a></li><li><a rel="nofollow" target="_blank">隐私声明</a></li><li><a  target="_blank">网站地图</a></li><li><a  rel="nofollow" target="_blank">友情链接</a></li><li><a  rel="nofollow" target="_blank">经纪人登录</a></li></ul></div><div class="fr">官方客服 1010 9666</div></div><div class="zhaijidi-link-box"><div class="fl"><div class="tab"><span class="hover">城市二手房</span><span>房产资讯</span><span>城区二手房</span><span>城区租房</span><span>城区小区</span><span>热门小区</span><span>热门问答</span><span>热门百科</span></div><div class="link-list"><div style="display: block;"><dd><a target="_blank">北京房产网</a><a target="_blank">广州房产网</a><a target="_blank">深圳房产网</a><a target="_blank">天津房产网</a><a target="_blank">成都房产网</a><a target="_blank">南京房产网</a><a target="_blank">杭州房产网</a><a target="_blank">青岛房产网</a><a target="_blank" href="https://dl.zhaijidi.com/">大连房产网</a><a target="_blank" href="https://xm.zhaijidi.com/">厦门房产网</a><a target="_blank" href="https://wh.zhaijidi.com/">武汉房产网</a><a target="_blank">重庆房产网</a><a target="_blank">长沙房产网</a><a target="_blank">济南房产网</a><a target="_blank">佛山房产网</a><a target="_blank">东莞房产网</a><a target="_blank" >西安房产网</a><a target="_blank">石家庄房产网</a><a target="_blank">烟台房产网</a><a target="_blank">中山房产网</a><a target="_blank">珠海房产网</a><a target="_blank">嘉兴房产网</a><a target="_blank">惠州房产网</a><a target="_blank">太原房产网</a><a target="_blank">沈阳房产网</a><a target="_blank">南通房产网</a><a target="_blank">海口房产网</a><a target="_blank">潍坊房产网</a><a target="_blank">无锡房产网</a><a target="_blank">合肥房产网</a><a target="_blank">昆明房产网</a><a target="_blank">郑州房产网</a><a target="_blank">泉州房产网</a><a target="_blank">绍兴房产网</a><a target="_blank">威海房产网</a><a target="_blank">长春房产网</a><a target="_blank">贵阳房产网</a><a target="_blank" >呼和浩特房产网</a><a target="_blank" >常德房产网</a><a target="_blank" >上饶房产网</a><a target="_blank" >福州房产网</a><a target="_blank" >株洲房产网</a><a target="_blank" >银川房产网</a><a target="_blank">北海房产网</a><a target="_blank" href="https://xianyang.zhaijidi.com/">咸阳房产网</a><a target="_blank" href="https://ha.zhaijidi.com/">淮安房产网</a><a target="_blank" href="https://mianyang.zhaijidi.com/">绵阳房产网</a><a target="_blank" href="https://dazhou.zhaijidi.com/">达州房产网</a><a target="_blank" href="https://xinxiang.zhaijidi.com/">新乡房产网</a><a target="_blank" href="https://nanchong.zhaijidi.com/">南充房产网</a><a target="_blank" href="https://luoyang.zhaijidi.com/">洛阳房产网</a><a target="_blank" href="https://zhanjiang.zhaijidi.com/">湛江房产网</a><a target="_blank" href="https://nc.zhaijidi.com/">南昌房产网</a><a target="_blank" href="https://huangshi.zhaijidi.com/">黄石房产网</a><a target="_blank" href="https://xy.zhaijidi.com/">襄阳房产网</a><a target="_blank" href="https://zb.zhaijidi.com/">淄博房产网</a><a target="_blank" href="https://kf.zhaijidi.com/">开封房产网</a><a target="_blank" href="https://yichang.zhaijidi.com/">宜昌房产网</a><a target="_blank" href="https://nb.zhaijidi.com/">宁波房产网</a><a target="_blank" href="https://xc.zhaijidi.com/">许昌房产网</a><a target="_blank" href="https://hrb.zhaijidi.com/">哈尔滨房产网</a></dd></div>
+  <script src="./sale_house_files/fe.js.下载"></script><script src="./sale_house_files/common.js.下载"></script><div style="display:none"><script src="./sale_house_files/ljanalytics.js.下载"></script><span id="cnzz_stat_icon_1253492439"></span><script src="./sale_house_files/c.php" type="text/javascript"></script><span id="cnzz_stat_icon_1254525948"></span><script src="./sale_house_files/c(1).php" type="text/javascript"></script><span id="cnzz_stat_icon_1255633284"></span><script src="./sale_house_files/c(2).php" type="text/javascript"></script><span id="cnzz_stat_icon_1255604082"></span><script src="./sale_house_files/z_stat.php" type="text/javascript"></script></div><div id="only" data-city="sh" data-page="yezhu_maifang"></div>
+<script>var path = 'https://s1.ljcdn.com/feroot/pc/asset?_v=20181108180132'.split("?");require.config({baseUrl: path[0],paths: {'echarts' : '../../dep/echarts-1.4.1/build/echarts','echarts/chart/bar' : '../../dep/echarts-1.4.1/build/echarts','echarts/chart/line' : '../../dep/echarts-1.4.1/build/echarts','echarts/chart/pie' : '../../dep/echarts-1.4.1/build/echarts','echarts3' : '../../dep/echarts3/echarts3','common': 'common','jquery-ui': '../../dep/jquery-ui/jquery-ui.min','zeroclipboard': '../../dep/zeroclipboard-2.2.0/ZeroClipboard'},urlArgs:  path[1]});var feData = {"cityName": "北京","getFavHouseUrl":       "/api/gethousefav","setFavHouseUrl":       "/api/sethousefav","getLastSearch":        "/api/getlastsearch","getCommunityHistory":  "/api/getcommunityhistory","verifyHouse":          "/api/verifyHouse","getUser":              "/api/getUser","verifyCode":           "/verifycode/getVerifyCode","complaint":            "/api/complaint","getDecoration":        "/api/getDecoration","trendData" :           "/site/getpicinfo"}</script>
+<script>
+require(['yezhu/maifang/index']);
+
+require(['common/backtopV3'], function (main) {
+  main({
+    ucid: '',
+    uuid: 'ad1e5744-67d8-438d-8949-893679c22024',
+    loadingImg: 'https://s1.ljcdn.com/feroot/pc/asset/ershoufang/sellDetail/img/loading.gif?_v=20181108180132',
+    qrImg: '//ajax.api.zhaijidi.com/qr/getDownloadQr'
+  });
+});
+</script>
+<script>require(['common/suggestion'], function (suggestion) {window.defaultSuggest = suggestion.init({requestOptions: {cityId: '310000',cityName: '上海'},url: '/api/headerSearch?channel=yezhu&q=',main: '#keyword-box',appendTo: '#suggest-cont',redirect: true});});</script><div class="loninContaner"><div class="overlay_bg" style="display: none;"></div><div class="panel_login animated" id="dialog"><div class="panel_info"><i class="close_login">×</i><div class="panel_tab"><div class="title"><div class="fl">账号密码登录</div></div><div class="clear"></div><div id="con_login_user"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item border-t userName"><input type="text" class="the_input topSpecial users" placeholder="请输入手机号" maxlength="11"></li><li class="item border-b pwd"><input type="password" class="the_input password" maxlength="20" placeholder="请输入登录密码"><em class="password-view"></em></li><li class="item checkVerimg" style="display:none;"><input type="text" class="the_input ver-img" maxlength="6" placeholder="请输入验证码"><img class="verImg"></li><li class="item drag" style="display:none;"><div id="drag"></div></li><li class="show-error"><dd>用户名或密码错误</dd></li><li class="li_01"><label class="checkbox-btn"><span class="active"><input type="checkbox" name="remember" value="1" class="mind-login" checked=""></span>7天内免登录</label><a href="javascript:;" rel="nofollow" class="toforget">忘记密码</a></li><li class="li_btn"><a class="login-user-btn">登录</a></li><li class="footer-link"><a href="javascript:;" rel="nofollow" class="totellogin">手机快捷登录</a></li></ul></form></div><div id="con_login_agent" class="undis"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item"><dd></dd><input type="text" class="the_input users" placeholder="输入经纪人ID号码"></li><li class="item"><input type="password" class="the_input password" placeholder="登录密码"></li><li class="li_01"><label class="checkbox-btn"><span class="active"><input type="checkbox" name="remember" value="1" class="mind-login" checked=""></span>7天内免登录</label><a href="https://passport.zhaijidi.com/register/resources/zhaijidi/forget.html?service=http://bj.zhaijidi.com/" rel="nofollow">忘记密码</a></li><li><input class="login-agent-btn" value="立即登录"></li></ul></form></div></div></div><div class="registered"></div></div><div id="dialog_tel" class="panel_login animated undefined" style="display: none;"><div class="panel_info"><i class="close_login">×</i><div class="panel_tab"><div class="title"><div class="fl">手机快捷登录</div><div class="register_text_tel">别担心，无账号自动注册不会导致手机号被泄露</div></div><div class="clear"></div><div id="con_login_user_tel"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item border-t userName"><input type="text" class="the_input topSpecial users_tel" maxlength="11" placeholder="请输入手机号"></li><!-- <li class="item pwd"><input type="password" class="the_input password_tel"  placeholder="请输入短信验证码"/></li> --><li class="item checkVerimg" style=""><input type="text" class="the_input ver-img" maxlength="6" placeholder="请输入验证码"><img class="verImg" src="./sale_house_files/freshCaptch"></li><li class="item border-b Verify"><input type="text" class="the_input verifycode" maxlength="6" placeholder="请输入短信验证码"><a class="send_verify_code" id="send_verify_code_tel" href="javascript:;" rel="nofollow"><em>获取验证码</em></a></li><li class="send_verify_code_s" id="send_verify_code_tel_s" href="javascript:;" rel="nofollow"><em>没有收到验证码？</em><a class="voice_a">发送语音验证码</a></li><li class="show-error"><dd>用户名或密码错误</dd></li><li class="li_01"><label class="checkbox-btn"><span class="active"><input type="checkbox" name="remember" value="1" class="mind-login" checked=""></span>7天内免登录</label></li><li class="li_btn"><a class="login-user-tel-btn">登录</a></li><li class="footer-link"><a href="javascript:;" rel="nofollow" class="tologin">账号密码登录</a></li></ul></form></div></div></div><div class="registered"></div></div><div class="panel_login animated" id="dialog_reg"><div class="panel_info"><i class="close_login">×</i><div class="panel_tab"><div class="title"><div class="fl">手机号码注册</div><label class="fr register_text">已有账号？<a href="javascript:;" rel="nofollow" class="tologin">去登录</a></label></div><div class="clear"></div><div id="con_login_user_reg"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item border-t userName"><input type="text" class="the_input topSpecial users_reg" maxlength="11" placeholder="请输入手机号"></li><li class="item checkVerimg" style=""><input type="text" class="the_input ver-img" maxlength="6" placeholder="请输入验证码"><img class="verImg"></li><li class="item border-c Verify"><input type="text" class="the_input verifycode" maxlength="6" placeholder="请输入短信验证码"><a class="send_verify_code" id="send_verify_code_reg" href="javascript:;" rel="nofollow"><em>获取验证码</em></a></li><li class="item border-b pwd"><input type="password" class="the_input password_reg" maxlength="20" placeholder="请输入密码（最少8位，数字+字母）"><em class="password-view"></em></li><li class="send_verify_code_s" id="send_verify_code_reg_s" href="javascript:;" rel="nofollow"><em>没有收到验证码？</em><a class="voice_a">发送语音验证码</a></li><li class="show-error"><dd>用户名或密码错误</dd></li><li class="li_01"><label class="checkbox-btn"><span class="active"><input type="checkbox" name="read" value="1" class="read-protocol" checked=""></span>我已阅读并同意</label><a class="toprotocol" href="https://www.zhaijidi.com/zhuanti/protocol" target="_blank">《宅基地用户使用协议》</a></li><li class="li_btn"><a class="register-user-btn">注册</a></li></ul></form></div></div></div><div class="registered"></div></div><div class="panel_login animated" id="dialog_forget"><div class="panel_info"><i class="close_login">×</i><div class="panel_tab"><div class="title"><div class="fl">找回密码</div></div><div class="clear"></div><div id="con_forget_user_tel" class="con_forget_user_tel"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item border-t userName"><input type="text" class="the_input topSpecial user_forget_phone" placeholder="请输入手机号" maxlength="11"></li><li class="item checkVerimg" style=""><input type="text" class="the_input ver-img" maxlength="6" placeholder="请输入验证码"><img class="verImg"></li><li class="item border-b Verify"><input type="text" class="the_input verifycode" maxlength="6" placeholder="请输入短信验证码"><a class="send_verify_code" id="send_verify_code_forget" href="javascript:;" rel="nofollow"><em>获取验证码</em></a></li><li class="item border-t pwd" style="margin-top:-1px;"><input type="password" class="the_input password_reg" maxlength="20" placeholder="请输入密码（最少8位，数字+字母）"><em class="password-view"></em></li><li class="send_verify_code_s" id="send_verify_code_forget_s"><em>没有收到验证码？</em><a class="voice_a">发送语音验证码</a></li><li class="show-error"><dd>用户名或密码错误</dd></li><li class="li_btn"><a class="user-forget">修改密码</a></li></ul></form></div><div id="con_forget_user_pw" class="con_forget_user_pw"><form action="https://sh.zhaijidi.com/yezhu/maifang/" method="post"><ul><li class="item border-t pwd"><input type="password" class="the_input password_reg" maxlength="20" placeholder="请输入密码（最少8位，数字+字母）"><em class="password-view"></em></li><li class="show-error"><dd>用户名或密码错误</dd></li><li class="li_btn"><a class="modify-user-pswd">修改密码</a></li></ul></form></div></div></div><div class="registered"></div></div></div>
+<!-- zhaijidiIM Style --><link property="stylesheet" rel="stylesheet" href="./sale_house_files/zhaijidiim.css"><script src="./sale_house_files/zhaijidiim1.1.min.js.下载"></script><style>.im-housecard img{vertical-align: baseline;}</style><!-- <script src="//s1-ljcdn.test.zhaijidi.com:8400/web-im-sdk/static/1.1/zhaijidiim1.1.min.js?v=20181115"></script> --><script>(function() {var imConf = {"ajaxroot":"\/\/ajax.api.zhaijidi.com\/","imAppid":"zhaijidi_WEB_20160624","imAppkey":"6dfdcee27d78b1107fceeca55d80b7bd"};let login = require('common/login');$.listener.on('userInfo', function (data) {if (data.code === 1) {data.ucid = '';}window.LJIM = new zhaijidiIM({appid: imConf.imAppid,appkey: imConf.imAppkey,login: login.openLoginDialog,is_ljbb: true,userData: data,downAppUrl: '//www.zhaijidi.com/client/',appDesc: '立即下载宅基地APP，随时随地聊~',staticRoot: 'https://s1.ljcdn.com/feroot/?_v=20181108180132'})});})();</script><script type="text/javascript">var advert = 'https://s1.ljcdn.com/feroot/pc/asset/common/advert.js?_v=20181108180132';
+    $.listener.on('userInfo', function (data) {
+      window.loginData = data;
+    });
+    var mvl = document.createElement('script');
+    mvl.type = 'text/javascript';
+    mvl.async = true;
+    mvl.src = advert;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(mvl, s);
+  </script><script type="text/javascript">(function(){var canonicalURL, curProtocol;var x=document.getElementsByTagName("link");if(x.length > 0){for (i=0;i<x.length;i++){if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){canonicalURL=x[i].href;}}}if (!canonicalURL){curProtocol = window.location.protocol.split(':')[0];}else{curProtocol = canonicalURL.split(':')[0];}if (!canonicalURL) canonicalURL = window.location.href;(function() {var e = /([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r = canonicalURL,t = document.referrer;if (!e.test(r)) {var n = (String(curProtocol).toLowerCase() === 'https') ? "https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif" : "//api.share.baidu.com/s.gif";t ? (n += "?r=" + encodeURIComponent(document.referrer), r && (n += "&l=" + r)) : r && (n += "?l=" + r);var i = new Image;i.src = n}})(window);})();</script><!--cookie mapping--><img src="./sale_house_files/saved_resource" alt="cookie_mapping_url" style="display: none;">
+<div class="zhaijidiim im-fold" data-role="zhaijidiim"><div class="zhaijidiim-shandow clear"><div class="zhaijidiim-wrap" data-role="im-wrap"><div class="zhaijidiim-head" data-role="im-head"><span data-role="im-title">在线咨询</span><span class="zhaijidiim-head-num" data-role="im-unread" data-unread="0" style="display: none;">0</span><a class="zhaijidiim-head-closebtn" title="收起" data-role="im-foldbtn">收起</a></div><div class="zhaijidiim-body" data-role="im-body"><ul class="zhaijidiim-service" data-role="im-serviceitem-container"><li class="zhaijidiim-body-item"><div class="im-item-show clear"><table><tbody><tr><td class="im-item-avatar"><img src="./sale_house_files/icon_serv@2xV2.png" alt="" width="40" height="40" data-role="im-listitem-item-avatar"><i data-role="im-listitem-item-newmsg" style="display: none;" data-newmsg="0">0</i></td><td class="im-item-cont"><span class="name" data-role="im-listitem-item-name">宅基地帮帮</span><span class="text" data-role="im-listitem-item-text">宅基地网官方人工客服</span></td></tr></tbody></table></div></li></ul><ul data-role="im-listitem-container" style="display: none;"></ul><div class="zhaijidiim-noagent" data-role="im-noagent-container" style=""><div class="noagent-title">没有聊过的经纪人</div></div></div></div><div class="zhaijidiim-window im-online" data-role="im-window" data-agentid="" style="display: none;"><div class="zhaijidiim-wintitle"><i>在线</i><span class="im-wt-name" data-role="im-window-name">宅基地帮帮</span><a class="im-wt-closebtn" title="关闭" data-role="im-window-closebtn">关闭</a></div><div class="zhaijidiim-wincont"><div class="im-wc-hint"><span data-role="im-window-offlinename"></span>当前不在线，您可以在线留言</div><div class="im-wc-chat" data-role="im-window-chatcontainer"><p class="chat-tophint">聊天的时候，经纪人无法知道您的手机号！</p><div data-role="im-logtrigger"></div><ul data-role="im-window-msgcontainer"></ul></div><div class="im-wc-input"><div class="im-input-container" data-role="im-input-container"><textarea placeholder="点击输入您想要咨询的问题…" data-role="im-input-textarea"></textarea><a class="im-input-insertpic" title="插入图片" data-role="im-input-picbtn">插入图片</a><input type="file" style="display: none;" accept=".gif,.jpg,.jpeg,.png,.bmp" data-role="im-input-picupload"><span class="im-errorlog" data-role="im-errorlog" style="display: none;"></span></div><div class="im-btn-container"><a href="https://www.zhaijidi.com/client/" target="_blank" title="下载宅基地APP">立即下载宅基地APP，随时随地聊~</a><input type="button" value="发送123" class="send" data-role="im-input-sendbtn"></div></div></div></div><div class="zhaijidiim-window im-online disabled" data-role="im-bang" style="display: none;"><div class="zhaijidiim-wintitle"><i>在线</i><span class="im-wt-name">宅基地帮帮</span><span class="im-wt-time">在线人工服务时间：9:00 - 23:00</span><a class="im-wt-closebtn" title="关闭" data-role="bang-close">关闭</a></div><div class="zhaijidiim-wincont"><div class="im-wc-chat bang-chatcontainer" data-role="bang-chatcontainer"><ul data-role="bang-msgcontainer"></ul></div><div class="im-wc-input"><div class="im-input-container" data-role="im-input-container"><textarea placeholder="点击输入您想要咨询的问题…" data-role="bang-textarea"></textarea><a class="im-input-insertpic" title="插入图片" data-role="bang-picbtn">插入图片</a><input type="file" style="display: none;" accept=".gif,.jpg,.jpeg,.png,.bmp" data-role="bang-picupload"></div><div class="im-btn-container"><input type="button" value="发送" class="send" data-role="bang-send"><input type="button" value="结束对话" class="end" data-role="bang-end" style="display: none;"></div></div></div></div></div><div class="zhaijidiim-personcard" data-role="im-pcard" style="display: none; top: 9999em; left: 9999em;"><div class="im-personcard-top clear"><div class="im-personcard-avatar"><img src="https://sh.zhaijidi.com/yezhu/maifang/" alt="" width="78" height="78" data-role="im-pcard-avatar"></div><div class="im-personcard-detail"><div class="im-personname-wrap"><span class="im-personname" data-role="im-pcard-name"></span><span class="im-gray" data-role="im-pcard-grade"></span></div><div><span class="im-gray">主营商圈：</span><span data-role="im-pcard-district"></span></div><div><span class="im-gray">所属门店：</span><span data-role="im-pcard-store"></span></div><div><span class="im-gray">从业年限：</span><span data-role="im-pcard-workage"></span></div></div></div><div class="im-personcard-bottom"><table><tbody><tr><td><span>累计成交：</span><span class="im-red" data-role="im-pcard-totaldeal"></span></td><td><span>月总带看：</span><span class="im-red" data-role="im-pcard-monthshow"></span></td><td><span>好评率：</span><span class="im-red" data-role="im-pcard-praiserate"></span></td></tr></tbody></table></div><a class="im-personcard-shopbtn" href="https://sh.zhaijidi.com/yezhu/maifang/" target="_blank" title="进入店铺" data-role="im-pcard-shoplink">进入店铺</a></div></div><div class="fix-right-v3" id="back-top" log-mod="sidebar"><table><tbody><tr><td><div class="sidebar-wrap"><ul class="hide"><li class="mycart sidebar-item"><a title="待看清单" data-url="//user.zhaijidi.com/site/seeList/" data-bl="mycart">带看清单</a><div class="popup"><i></i><div class="head-line"><span class="title"><a href="https://user.zhaijidi.com/site/seeList/" target="_blank">待看清单</a></span><span class="explain"><a href="https://user.zhaijidi.com/site/seeList/" target="_blank">一次可以选择多套房源预约带看</a></span></div><ul class="zones hide"></ul><div class="zone-loading hide"><div class="msg">加载中...</div></div><div class="book-btn hide"><a href="https://user.zhaijidi.com/site/seeList/" target="_blank">立即预约</a></div><div class="empty-cart hide"><div class="no-log-empty-img"></div><div class="msg">登录后可查看房源清单</div><span class="log-in-btn">登录<i></i></span></div><div class="failed-cart hide"><div class="failed-img"></div><div class="msg">加载失败，请重试</div></div><div class="loading"><img class="loading-img" src="./sale_house_files/loading.gif"><div class="msg">加载中，请稍后</div></div></div></li></ul><ul><li class="myfav sidebar-item"><a title="我关注的房源" data-url="//user.zhaijidi.com/site/favorHouse/" data-bl="myfav">我关注的房源</a><span class="popup"><i></i>我关注的房源</span></li><li class="bannerCompare sidebar-item"><a class="bannerCompareIcon" data-bl="compare">房源对比</a><div class="popup" id="bannerComparePopup">
+  <i></i>
+  <div class="bannerCompareContainer"><div class="empty-cart">
+  <div class="empty-img"></div>
+  <div class="msg">暂无对比房源</div>
+  <a class="link-btn" href="http://sh.zhaijidi.com/ershoufang" target="_blank">
+    去选房<i></i>
+  </a>
+</div></div>
+  </div>
+</li></ul></div>
+<div class="sidebar-line"></div><ul><li class="sell sidebar-item"><a title="在线卖房" href="https://sh.zhaijidi.com/yezhu/" target="_blank" data-bl="sell">在线卖房</a><span class="popup"><i></i>在线卖房</span></li><li class="tool sidebar-item"><a title="房贷计算器" href="https://sh.zhaijidi.com/tool.html?sub=0" target="_blank">房贷计算器</a><span class="popup"><i></i>房贷计算器</span></li><ul><li class="baodan sidebar-item"><a href="https://sh.zhaijidi.com/anxinchengnuo" title="安心保单" target="_blank" data-bl="baodan">安心保单</a><span class="popup"><i></i>安心保单</span></li><li class="download sidebar-item"><a href="https://www.zhaijidi.com/client/" title="" target="_blank" data-bl="client">下载掌上宅基地</a><span class="popup popup-qr"><i></i><img src="./sale_house_files/wxapp.jpg" alt="下载掌上宅基地" width="94"><em class="qr-title">宅基地微信小程序</em></span></li><li class="phone sidebar-item"><a title="官方客服">官方客服</a><span class="popup"><i></i>官方客服</span></li><li class="feedback sidebar-item" id="feedback"><a title="反馈/投诉" data-bl="feedback"></a><span class="popup"><i></i>反馈/投诉</span></li></ul></ul></td></tr></tbody></table><ul><li class="gotop sidebar-item" id="gotop" style="display: none;"><a title="返回顶部">返回顶部</a><span class="popup"><i></i>返回顶部</span></li></ul></div><div class="feedback-box animated"><p>您对新版宅基地网有任何意见和建议，或使用中遇到的问题，请在本页面反馈。我们会每天关注并不断优化产品，为您提供更好的服务！</p><div class="tab"><span class="check">意见反馈</span><span class="ent">我要投诉</span></div><div class="complain"><div class="tab-box"><div class="box"><span>反馈内容<label class="erro-tips">请输入反馈内容</label></span><textarea id="count" placeholder="我们非常乐意收到您使用网站过程中的感受和意见" autofocus=""></textarea></div><div class="box"><span>联系方式<i>(选填)</i></span><input type="text" id="tel" placeholder="手机号、Email、QQ均可"></div><div class="clear"></div><div class="fl"><button id="sub">提交反馈</button><span id="tips"></span></div></div><div class="tab-box appeal" style="display:none;"><div class="tel"><i></i>投诉热线/1010 9666</div><b>处理流程</b><p>您可以通过宅基地网投诉热线提交投诉，我们会在24小时内（工作时间）反馈解决方案</p><div id="tousu"><b>投诉公示</b><ul id="list"></ul><a class="btn-more" href="https://sh.zhaijidi.com/report/tousu/" target="_blank" rel="nofollow">点击查看全部详情</a></div></div></div><div class="closebok"><img src="./sale_house_files/close.png"></div></div></body></html>
